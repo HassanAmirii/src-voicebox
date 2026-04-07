@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nacos src voicebox | Student Reporting</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="grid-overlay" aria-hidden="true"></div>
+
+    <header class="top-bar fade-up">
+      <div class="brand-wrap">
+        <h1 class="brand">
+          <span class="brand-accent">N</span>acos src voicebox
+        </h1>
+        <p class="brand-sub">
+          anonymous student wellbeing and incident reporting
+        </p>
+      </div>
+      <button
+        id="mobileMenuToggle"
+        class="btn btn-ghost top-icon-btn menu-toggle"
+        aria-label="Toggle header menu"
+        aria-expanded="false"
+        title="Menu"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="top-icon">
+          <path
+            d="M4 7h16M4 12h16M4 17h16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+          />
+        </svg>
+        <span class="sr-only">Menu</span>
+      </button>
+      <div id="topControls" class="top-controls">
+        <button
+          id="themeToggle"
+          class="btn btn-ghost top-icon-btn"
+          aria-label="Toggle light and dark mode"
+          title="Toggle theme"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="top-icon">
+            <path
+              d="M12 3a9 9 0 1 0 9 9A7 7 0 0 1 12 3Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+            />
+          </svg>
+          <span class="top-action-label">Theme</span>
+          <span class="sr-only">Theme</span>
+        </button>
+        <a
+          id="adminEntryBtn"
+          class="btn btn-accent top-icon-btn"
+          href="admin.html"
+          aria-label="Admin access only"
+          title="Restricted: authorized SRC officers only"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="top-icon">
+            <path
+              d="M12 2 4 5v6c0 5 3.2 9.7 8 11 4.8-1.3 8-6 8-11V5l-8-3Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+            />
+          </svg>
+          <span class="top-action-label">Admin Access</span>
+          <span class="sr-only">Admin Login</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="hero panel fade-up" aria-label="About src voicebox">
+        <p class="hero-kicker">University Safe Channel</p>
+        <h2 class="hero-title">Speak honestly. Stay protected.</h2>
+        <p class="hero-text">
+          Nacos src voicebox gives students a trusted channel to report safety
+          concerns, mistreatment, and wellbeing issues while protecting
+          identity.
+        </p>
+        <div class="hero-metrics" aria-label="Campus support highlights">
+          <article class="hero-metric-tab">
+            <p class="metric-value">100+</p>
+            <p class="metric-label">Handled comments</p>
+          </article>
+          <article class="hero-metric-tab">
+            <p class="metric-value">200+</p>
+            <p class="metric-label">Reports received</p>
+          </article>
+          <article class="hero-metric-tab">
+            <p class="metric-value">We are here</p>
+            <p class="metric-label">Come, let us help you</p>
+          </article>
+        </div>
+      </section>
+
+      <section
+        id="studentPanel"
+        class="panel fade-up"
+        aria-label="Student anonymous complaint form"
+      >
+        <div class="panel-head">
+          <h2>Share Your Concern</h2>
+          <p>Report incidents safely within your university community.</p>
+        </div>
+
+        <form id="complaintForm" class="form-stack">
+          <label class="field">
+            <span>Title</span>
+            <input
+              type="text"
+              id="complaintTitle"
+              placeholder="Short summary of your complaint"
+              required
+            />
+          </label>
+
+          <fieldset class="field">
+            <legend>Tags</legend>
+            <div id="tagGroup" class="tag-grid">
+              <label class="tag-option"
+                ><input type="checkbox" value="Assault" /> Assault</label
+              >
+              <label class="tag-option"
+                ><input type="checkbox" value="Mockery" /> Mockery</label
+              >
+              <label class="tag-option"
+                ><input type="checkbox" value="Unfair Academic Challenge" />
+                Unfair Academic Challenge</label
+              >
+              <label class="tag-option"
+                ><input type="checkbox" value="Class Disturbance" /> Class
+                Disturbance</label
+              >
+              <label class="tag-option"
+                ><input type="checkbox" value="Harassment" /> Harassment</label
+              >
+              <label class="tag-option"
+                ><input type="checkbox" value="Bullying" /> Bullying</label
+              >
+              <label class="tag-option"
+                ><input type="checkbox" value="Discrimination" />
+                Discrimination</label
+              >
+              <label class="tag-option"
+                ><input type="checkbox" value="Lab Safety" /> Lab Safety</label
+              >
+              <label class="tag-option"
+                ><input type="checkbox" value="Hostel Safety" /> Hostel
+                Safety</label
+              >
+              <label class="tag-option"
+                ><input type="checkbox" value="Lecturer Misconduct" /> Lecturer
+                Misconduct</label
+              >
+              <label class="tag-option"
+                ><input type="checkbox" value="Peer Threat" /> Peer
+                Threat</label
+              >
+              <label class="tag-option"
+                ><input type="checkbox" value="Mental Health Distress" /> Mental
+                Health Distress</label
+              >
+            </div>
+          </fieldset>
+
+          <label class="field">
+            <span>Comment</span>
+            <textarea
+              id="complaintComment"
+              rows="6"
+              placeholder="Tell us what happened, where, and when."
+              required
+            ></textarea>
+          </label>
+
+          <label class="field">
+            <span>Identity (Optional)</span>
+            <input
+              type="text"
+              id="identityBox"
+              placeholder="Name, student ID, email, or phone (optional)"
+            />
+            <small class="identity-note"
+              >We act on every report. Stay anonymous if your details are enough
+              for action; if more context is needed, your identity remains fully
+              protected while we resolve this together.</small
+            >
+          </label>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-accent">
+              Submit Complaint
+            </button>
+            <span
+              id="submissionStatus"
+              class="status"
+              aria-live="polite"
+            ></span>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer fade-up">
+      <p>Nacos src voicebox</p>
+      <p>safer university reporting and response</p>
+    </footer>
+
+    <script src="student.js"></script>
+  </body>
+</html>

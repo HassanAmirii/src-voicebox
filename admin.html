@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nacos src voicebox | Admin Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="grid-overlay" aria-hidden="true"></div>
+
+    <header class="top-bar fade-up">
+      <div class="brand-wrap">
+        <h1 class="brand">
+          <span class="brand-accent">N</span>acos src voicebox
+        </h1>
+        <p class="brand-sub">admin moderation and reporting operations</p>
+      </div>
+      <button
+        id="mobileMenuToggle"
+        class="btn btn-ghost top-icon-btn menu-toggle"
+        aria-label="Toggle header menu"
+        aria-expanded="false"
+        title="Menu"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="top-icon">
+          <path
+            d="M4 7h16M4 12h16M4 17h16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+          />
+        </svg>
+        <span class="sr-only">Menu</span>
+      </button>
+      <div id="topControls" class="top-controls">
+        <button
+          id="themeToggle"
+          class="btn btn-ghost top-icon-btn"
+          aria-label="Toggle light and dark mode"
+          title="Toggle theme"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="top-icon">
+            <path
+              d="M12 3a9 9 0 1 0 9 9A7 7 0 0 1 12 3Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+            />
+          </svg>
+          <span class="top-action-label">Theme</span>
+          <span class="sr-only">Theme</span>
+        </button>
+        <a
+          class="btn btn-ghost top-icon-btn"
+          href="index.html"
+          aria-label="Back to student view"
+          title="Back to student view"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="top-icon">
+            <path
+              d="M14 6 8 12l6 6M8 12h12"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+            />
+          </svg>
+          <span class="top-action-label">Student View</span>
+          <span class="sr-only">Back</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section
+        id="adminGateway"
+        class="panel fade-up"
+        aria-label="Admin access panel"
+      >
+        <div class="panel-head">
+          <h2 id="adminFormTitle">Admin Login</h2>
+          <p>Secure access for authorized university case managers.</p>
+          <p class="admin-restricted">
+            Restricted area: student accounts are not permitted in this section.
+          </p>
+        </div>
+
+        <div class="admin-switch">
+          <button id="showLogin" class="switch-btn active">Login</button>
+          <button id="showSignup" class="switch-btn">Sign Up</button>
+        </div>
+
+        <form id="loginForm" class="form-stack">
+          <label class="field">
+            <span>Username</span>
+            <div class="with-help">
+              <input
+                type="text"
+                id="adminUsername"
+                placeholder="Enter admin username"
+                required
+              />
+              <button
+                type="button"
+                class="icon-btn info-btn"
+                data-info="Use your assigned SRC admin username."
+              >
+                i
+              </button>
+            </div>
+          </label>
+
+          <label class="field">
+            <span>Password</span>
+            <div class="with-help">
+              <input
+                type="password"
+                id="adminPassword"
+                placeholder="Enter password"
+                required
+              />
+              <button
+                type="button"
+                class="icon-btn info-btn"
+                data-info="Use the secure password issued by your coordinator."
+              >
+                i
+              </button>
+            </div>
+          </label>
+
+          <button type="submit" class="btn btn-accent">
+            Login to Dashboard
+          </button>
+        </form>
+
+        <form id="signupForm" class="form-stack hidden">
+          <label class="field">
+            <span>New Username</span>
+            <input
+              type="text"
+              id="signupUsername"
+              placeholder="Create username"
+              required
+            />
+          </label>
+
+          <label class="field">
+            <span>New Password</span>
+            <input
+              type="password"
+              id="signupPassword"
+              placeholder="Create password"
+              required
+            />
+          </label>
+
+          <label class="field">
+            <span>Membership Code</span>
+            <input
+              type="text"
+              id="membershipCode"
+              placeholder="Enter membership code from an existing admin"
+              required
+            />
+          </label>
+
+          <button type="submit" class="btn btn-accent">
+            Create Admin Account
+          </button>
+        </form>
+
+        <p id="authStatus" class="status" aria-live="polite"></p>
+      </section>
+
+      <section
+        id="adminDashboard"
+        class="panel hidden fade-up"
+        aria-label="Admin dashboard"
+      >
+        <div class="panel-head row-head">
+          <h2>Admin Dashboard</h2>
+          <button id="logoutBtn" class="btn btn-ghost">Logout</button>
+        </div>
+
+        <nav class="tab-nav" aria-label="Dashboard tabs">
+          <button class="tab-btn active" data-tab="unhandledTab">
+            Unhandled
+          </button>
+          <button class="tab-btn" data-tab="queueTab">Queue</button>
+          <button class="tab-btn" data-tab="handledTab">Handled</button>
+          <button class="tab-btn" data-tab="statsTab">Stats</button>
+          <button class="tab-btn" data-tab="adminsTab">Admin Management</button>
+        </nav>
+
+        <div id="unhandledTab" class="tab-content active">
+          <h3>Unhandled Reports</h3>
+          <p class="entry-help">
+            Use Queue + Add Comment to move a report into the active case queue.
+          </p>
+          <div class="controls-row">
+            <input
+              type="search"
+              id="unhandledSearch"
+              placeholder="Search title or text"
+            />
+            <select id="unhandledTagFilter">
+              <option value="all">All tags</option>
+            </select>
+          </div>
+          <div id="unhandledList" class="entry-list"></div>
+          <div class="pagination">
+            <button id="unhandledPrev" class="btn btn-ghost">Previous</button>
+            <span id="unhandledPageInfo" class="page-info"></span>
+            <button id="unhandledNext" class="btn btn-ghost">Next</button>
+          </div>
+        </div>
+
+        <div id="queueTab" class="tab-content">
+          <h3>Case Queue</h3>
+          <div id="queueList" class="entry-list"></div>
+          <div class="pagination">
+            <button id="queuePrev" class="btn btn-ghost">Previous</button>
+            <span id="queuePageInfo" class="page-info"></span>
+            <button id="queueNext" class="btn btn-ghost">Next</button>
+          </div>
+        </div>
+
+        <div id="handledTab" class="tab-content">
+          <h3>Handled Reports</h3>
+          <div class="controls-row">
+            <input
+              type="search"
+              id="handledSearch"
+              placeholder="Search title or text"
+            />
+            <select id="handledTagFilter">
+              <option value="all">All tags</option>
+            </select>
+          </div>
+          <div id="handledList" class="entry-list"></div>
+          <div class="pagination">
+            <button id="handledPrev" class="btn btn-ghost">Previous</button>
+            <span id="handledPageInfo" class="page-info"></span>
+            <button id="handledNext" class="btn btn-ghost">Next</button>
+          </div>
+        </div>
+
+        <div id="statsTab" class="tab-content">
+          <h3>Submission Stats</h3>
+          <div class="stats-grid">
+            <article class="stat-card">
+              <p class="stat-label">Total this week</p>
+              <p id="weeklyTotal" class="stat-value">0</p>
+            </article>
+            <article class="stat-card">
+              <p class="stat-label">Submissions today</p>
+              <p id="todayTotal" class="stat-value">0</p>
+            </article>
+            <article class="stat-card">
+              <p class="stat-label">Handled ratio</p>
+              <p id="handledRatio" class="stat-value">0%</p>
+            </article>
+          </div>
+          <div class="chart-wrap">
+            <canvas
+              id="statusChart"
+              width="360"
+              height="360"
+              aria-label="Pie chart showing handled and unhandled report ratio"
+            ></canvas>
+          </div>
+        </div>
+
+        <div id="adminsTab" class="tab-content">
+          <h3>Admin Management</h3>
+          <div class="admin-actions">
+            <button id="generateCodeBtn" class="btn btn-accent">
+              Generate Membership Code
+            </button>
+            <p id="generatedCode" class="status mono"></p>
+          </div>
+          <div id="adminList" class="admin-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer fade-up">
+      <p>Nacos src voicebox</p>
+      <p>admin operations and case response</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
