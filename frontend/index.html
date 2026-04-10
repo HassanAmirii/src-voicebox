@@ -116,101 +116,131 @@
           <p>Report incidents safely within your university community.</p>
         </div>
 
-        <form id="complaintForm" class="form-stack">
-          <label class="field">
-            <span>Title</span>
-            <input
-              type="text"
-              id="complaintTitle"
-              placeholder="Short summary of your complaint"
-              required
-            />
-          </label>
+        <nav class="student-tab-nav" aria-label="Student frontend tabs">
+          <button
+            type="button"
+            class="student-tab-btn active"
+            data-student-tab="reportFormTab"
+          >
+            Submit Report
+          </button>
+          <button
+            type="button"
+            class="student-tab-btn"
+            data-student-tab="publicBoardTab"
+          >
+            Recent Reports
+          </button>
+        </nav>
 
-          <fieldset class="field">
-            <legend>Tags</legend>
-            <div id="tagGroup" class="tag-grid">
-              <label class="tag-option"
-                ><input type="checkbox" value="Assault" /> Assault</label
+        <div id="reportFormTab" class="student-tab-content active">
+          <form id="complaintForm" class="form-stack">
+            <label class="field">
+              <span>Title</span>
+              <input
+                type="text"
+                id="complaintTitle"
+                placeholder="Short summary of your complaint"
+                required
+              />
+            </label>
+
+            <fieldset class="field">
+              <legend>Tags</legend>
+              <div id="tagGroup" class="tag-grid">
+                <label class="tag-option"
+                  ><input type="checkbox" value="Assault" /> Assault</label
+                >
+                <label class="tag-option"
+                  ><input type="checkbox" value="Mockery" /> Mockery</label
+                >
+                <label class="tag-option"
+                  ><input type="checkbox" value="Unfair Academic Challenge" />
+                  Unfair Academic Challenge</label
+                >
+                <label class="tag-option"
+                  ><input type="checkbox" value="Class Disturbance" /> Class
+                  Disturbance</label
+                >
+                <label class="tag-option"
+                  ><input type="checkbox" value="Harassment" />
+                  Harassment</label
+                >
+                <label class="tag-option"
+                  ><input type="checkbox" value="Bullying" /> Bullying</label
+                >
+                <label class="tag-option"
+                  ><input type="checkbox" value="Discrimination" />
+                  Discrimination</label
+                >
+                <label class="tag-option"
+                  ><input type="checkbox" value="Lab Safety" /> Lab
+                  Safety</label
+                >
+                <label class="tag-option"
+                  ><input type="checkbox" value="Hostel Safety" /> Hostel
+                  Safety</label
+                >
+                <label class="tag-option"
+                  ><input type="checkbox" value="Lecturer Misconduct" />
+                  Lecturer Misconduct</label
+                >
+                <label class="tag-option"
+                  ><input type="checkbox" value="Peer Threat" /> Peer
+                  Threat</label
+                >
+                <label class="tag-option"
+                  ><input type="checkbox" value="Mental Health Distress" />
+                  Mental Health Distress</label
+                >
+              </div>
+            </fieldset>
+
+            <label class="field">
+              <span>Comment</span>
+              <textarea
+                id="complaintComment"
+                rows="6"
+                placeholder="Tell us what happened, where, and when."
+                required
+              ></textarea>
+            </label>
+
+            <label class="field">
+              <span>Identity (Optional)</span>
+              <input
+                type="text"
+                id="identityBox"
+                placeholder="Name, student ID, email, or phone (optional)"
+              />
+              <small class="identity-note"
+                >We act on every report. Stay anonymous if your details are
+                enough for action; if more context is needed, your identity
+                remains fully protected while we resolve this together.</small
               >
-              <label class="tag-option"
-                ><input type="checkbox" value="Mockery" /> Mockery</label
-              >
-              <label class="tag-option"
-                ><input type="checkbox" value="Unfair Academic Challenge" />
-                Unfair Academic Challenge</label
-              >
-              <label class="tag-option"
-                ><input type="checkbox" value="Class Disturbance" /> Class
-                Disturbance</label
-              >
-              <label class="tag-option"
-                ><input type="checkbox" value="Harassment" /> Harassment</label
-              >
-              <label class="tag-option"
-                ><input type="checkbox" value="Bullying" /> Bullying</label
-              >
-              <label class="tag-option"
-                ><input type="checkbox" value="Discrimination" />
-                Discrimination</label
-              >
-              <label class="tag-option"
-                ><input type="checkbox" value="Lab Safety" /> Lab Safety</label
-              >
-              <label class="tag-option"
-                ><input type="checkbox" value="Hostel Safety" /> Hostel
-                Safety</label
-              >
-              <label class="tag-option"
-                ><input type="checkbox" value="Lecturer Misconduct" /> Lecturer
-                Misconduct</label
-              >
-              <label class="tag-option"
-                ><input type="checkbox" value="Peer Threat" /> Peer
-                Threat</label
-              >
-              <label class="tag-option"
-                ><input type="checkbox" value="Mental Health Distress" /> Mental
-                Health Distress</label
-              >
+            </label>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-accent">
+                Submit Complaint
+              </button>
+              <span
+                id="submissionStatus"
+                class="status"
+                aria-live="polite"
+              ></span>
             </div>
-          </fieldset>
+          </form>
+        </div>
 
-          <label class="field">
-            <span>Comment</span>
-            <textarea
-              id="complaintComment"
-              rows="6"
-              placeholder="Tell us what happened, where, and when."
-              required
-            ></textarea>
-          </label>
-
-          <label class="field">
-            <span>Identity (Optional)</span>
-            <input
-              type="text"
-              id="identityBox"
-              placeholder="Name, student ID, email, or phone (optional)"
-            />
-            <small class="identity-note"
-              >We act on every report. Stay anonymous if your details are enough
-              for action; if more context is needed, your identity remains fully
-              protected while we resolve this together.</small
-            >
-          </label>
-
-          <div class="form-actions">
-            <button type="submit" class="btn btn-accent">
-              Submit Complaint
-            </button>
-            <span
-              id="submissionStatus"
-              class="status"
-              aria-live="polite"
-            ></span>
-          </div>
-        </form>
+        <div id="publicBoardTab" class="student-tab-content">
+          <h3>Public Status Board</h3>
+          <p class="entry-help">
+            Recent reports are shown by title and timestamp so you can track
+            progress while keeping sensitive details private.
+          </p>
+          <div id="publicStatusList" class="entry-list"></div>
+        </div>
       </section>
     </main>
 

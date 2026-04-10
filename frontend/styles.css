@@ -397,6 +397,41 @@ textarea {
   margin-top: 1rem;
 }
 
+.student-tab-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.student-tab-btn {
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--text);
+  padding: 0.62rem 0.72rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+[data-theme="dark"] .student-tab-btn {
+  background: rgba(15, 15, 13, 0.55);
+}
+
+.student-tab-btn.active {
+  background: color-mix(in srgb, var(--accent), transparent 75%);
+  color: var(--text);
+}
+
+.student-tab-content {
+  display: none;
+  margin-top: 1rem;
+}
+
+.student-tab-content.active {
+  display: block;
+}
+
 .controls-row {
   margin-top: 0.7rem;
   display: grid;
@@ -462,6 +497,18 @@ textarea {
   margin-top: 0.45rem;
   color: var(--muted);
   font-size: 0.9rem;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.08rem 0.4rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent), transparent 55%);
+  color: color-mix(in srgb, var(--accent), var(--text) 25%);
+  background: color-mix(in srgb, var(--accent), transparent 88%);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78rem;
 }
 
 .entry-actions {
