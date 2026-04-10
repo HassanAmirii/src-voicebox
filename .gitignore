@@ -1,0 +1,7 @@
+# Dependency folders
+backend/node_modules/
+frontend/node_modules/
+
+# Environment variables (Crucial for security)
+backend/.env
+frontend/.env.local
