@@ -38,6 +38,7 @@ const reportSchema = new mongoose.Schema(
     },
     identity: {
       type: String,
+      select: false,
       default: "Anonymous",
       required: true,
       trim: true,
