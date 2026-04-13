@@ -40,8 +40,11 @@ const reportSchema = new mongoose.Schema(
       type: String,
       select: false,
       default: "Anonymous",
-      required: true,
       trim: true,
+      minlength: [
+        15,
+        "please provide enough data to best figure out your identity",
+      ],
     },
     comment: {
       type: String,
@@ -54,7 +57,6 @@ const reportSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      required: true,
       default: "Unhandled",
       enum: ["Unhandled", "Queue", "Handled"],
       trim: true,
