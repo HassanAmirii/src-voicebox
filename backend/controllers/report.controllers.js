@@ -1,15 +1,18 @@
 import mongoose from "mongoose";
 import Report from "../models/report.models.js";
+import { validateCreateReport } from "../validators/report.validators.js";
 export const createReport = async (req, res, next) => {
   try {
-    const { title, tags, identity, comment, status, adminNote } = req.body;
+    const { error } = validateCreateReport.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+    const { title, tags, identity, comment } = req.body;
     await Report.create({
       title,
       tags,
       identity,
       comment,
-      status,
-      adminNote,
     });
 
     return res.status(201).json({ success: true, message: "report submitted" });
@@ -20,8 +23,8 @@ export const createReport = async (req, res, next) => {
 
 export const getAllReports = async (req, res, next) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(parseInt(req.query.limit) || 10, 100);
     const skip = (page - 1) * limit;
 
     const [reports, totalReports] = await Promise.all([
