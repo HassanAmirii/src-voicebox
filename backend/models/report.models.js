@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const complainSchema = new mongoose.Schema(
+const reportSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -76,4 +76,4 @@ const complainSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-export default mongoose.model("Complain", complainSchema);
+export default mongoose.model("Report", reportSchema);
