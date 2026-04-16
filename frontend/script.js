@@ -239,7 +239,7 @@ function renderReports() {
     const card = renderEntryCard(report, idx);
     const actions = document.createElement("div");
     actions.className = "entry-actions";
-    actions.innerHTML = `<button class="btn btn-accent queue-action" data-id="${report.id}">Queue + Add Comment</button>`;
+    actions.innerHTML = `<button class="btn btn-accent queue-action" data-id="${report.id}">Click to Queue + Add Comment</button>`;
     card.appendChild(actions);
     unhandledList.appendChild(card);
   });
@@ -248,7 +248,7 @@ function renderReports() {
     const card = renderEntryCard(report, idx);
     const actions = document.createElement("div");
     actions.className = "entry-actions";
-    actions.innerHTML = `<button class="btn btn-accent mark-handled" data-id="${report.id}">Handled</button>`;
+    actions.innerHTML = `<button class="btn btn-accent mark-handled" data-id="${report.id}">Click to Mark as Handled</button>`;
     card.appendChild(actions);
     queueList.appendChild(card);
   });
@@ -257,7 +257,7 @@ function renderReports() {
     const card = renderEntryCard(report, idx);
     const actions = document.createElement("div");
     actions.className = "entry-actions";
-    actions.innerHTML = `<button class="btn btn-ghost return-queue" data-id="${report.id}">Return to Queue</button>`;
+    actions.innerHTML = `<button class="btn btn-ghost return-queue" data-id="${report.id}">Click to Return to Queue</button>`;
     card.appendChild(actions);
     handledList.appendChild(card);
   });
