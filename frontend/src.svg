@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="VoiceBox source icon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f5132"/>
+      <stop offset="1" stop-color="#1b7a4e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6d365"/>
+      <stop offset="1" stop-color="#f4b843"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="url(#bg)"/>
+  <rect x="32" y="32" width="448" height="448" rx="80" fill="none" stroke="#f8fbf7" stroke-opacity="0.2" stroke-width="8"/>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="176" y="108" width="160" height="220" rx="80" fill="url(#accent)"/>
+    <path d="M132 236c0 74 56 128 124 128s124-54 124-128" stroke="#f8fbf7" stroke-width="24"/>
+    <path d="M256 364v48" stroke="#f8fbf7" stroke-width="24"/>
+    <path d="M204 412h104" stroke="#f8fbf7" stroke-width="24"/>
+    <path d="M216 168v100" stroke="#fff6d8" stroke-width="16"/>
+    <path d="M256 152v116" stroke="#fff6d8" stroke-width="16"/>
+    <path d="M296 168v100" stroke="#fff6d8" stroke-width="16"/>
+  </g>
+</svg>
