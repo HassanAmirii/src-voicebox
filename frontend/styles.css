@@ -3,7 +3,7 @@
   --text: #1f1f1b;
   --muted: #5f5f56;
   --accent: #4a9e5c;
-  --card: rgba(255, 255, 255, 0.7);
+  --card: rgba(248, 248, 245, 0.8);
   --border: rgba(20, 20, 16, 0.13);
   --grid: rgba(24, 24, 18, 0.06);
   --tag-bg: #e6efe6;
@@ -38,7 +38,7 @@ body {
 body {
   font-family: "IBM Plex Sans", sans-serif;
   color: var(--text);
-  background: var(--bg);
+  background: linear-gradient(180deg, #f1f2f1 0%, #f7f6f2 42%, #f2f3f1 100%);
   position: relative;
   transition:
     background-color 0.2s ease,
@@ -185,7 +185,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0.62rem;
-  background: rgba(255, 255, 255, 0.45);
+  background: rgba(248, 248, 245, 0.55);
 }
 
 [data-theme="dark"] .hero-metric-tab {
@@ -263,7 +263,7 @@ textarea,
 .tab-btn {
   border-radius: 8px;
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(248, 248, 245, 0.72);
   color: var(--text);
   padding: 0.62rem 0.72rem;
   font: inherit;
@@ -317,6 +317,20 @@ textarea {
 .identity-note {
   color: var(--muted);
   line-height: 1.4;
+}
+
+.field-counter {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.field-counter:empty {
+  display: none;
+}
+
+.field-counter.invalid {
+  color: var(--danger);
 }
 
 .form-actions {
@@ -407,7 +421,7 @@ textarea {
 .student-tab-btn {
   border-radius: 8px;
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(248, 248, 245, 0.72);
   color: var(--text);
   padding: 0.62rem 0.72rem;
   font: inherit;
@@ -464,7 +478,7 @@ textarea {
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.48);
+  background: rgba(248, 248, 245, 0.64);
   transition: transform 0.15s ease;
 }
 
@@ -537,7 +551,7 @@ textarea {
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0.7rem;
-  background: rgba(255, 255, 255, 0.48);
+  background: rgba(248, 248, 245, 0.64);
 }
 
 [data-theme="dark"] .stat-card {
@@ -563,6 +577,26 @@ textarea {
   gap: 0.55rem;
 }
 
+.generated-code-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.copy-code-btn {
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copy-code-btn.hidden {
+  display: none;
+}
+
 .admin-list {
   margin-top: 0.8rem;
   display: grid;
@@ -580,6 +614,15 @@ textarea {
 }
 
 .remove-admin {
+  border: 1px solid color-mix(in srgb, var(--danger), transparent 50%);
+  color: var(--danger);
+  background: transparent;
+  border-radius: 8px;
+  padding: 0.42rem 0.62rem;
+  cursor: pointer;
+}
+
+.remove-admin-confirm {
   border: 1px solid color-mix(in srgb, var(--danger), transparent 50%);
   color: var(--danger);
   background: transparent;

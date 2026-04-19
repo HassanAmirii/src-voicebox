@@ -269,6 +269,10 @@
           <h3>Submission Stats</h3>
           <div class="stats-grid">
             <article class="stat-card">
+              <p class="stat-label">Total reports</p>
+              <p id="totalReports" class="stat-value">0</p>
+            </article>
+            <article class="stat-card">
               <p class="stat-label">Total this week</p>
               <p id="weeklyTotal" class="stat-value">0</p>
             </article>
@@ -297,7 +301,25 @@
             <button id="generateCodeBtn" class="btn btn-accent">
               Click to Generate Membership Code
             </button>
-            <p id="generatedCode" class="status mono"></p>
+            <div class="generated-code-wrap">
+              <p id="generatedCode" class="status mono"></p>
+              <button
+                id="copyMembershipCodeBtn"
+                class="btn btn-ghost copy-code-btn hidden"
+                type="button"
+                aria-label="Copy generated membership code"
+                title="Copy code"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="top-icon">
+                  <path
+                    d="M9 9h10v12H9zM5 3h10v2H7v8H5z"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
           <div id="adminList" class="admin-list"></div>
         </div>
@@ -309,6 +331,7 @@
       <p>admin operations and case response</p>
     </footer>
 
+    <script src="config.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

@@ -1,17 +1,45 @@
+const API_BASE_URL =
+  (window.VOICEBOX_CONFIG && window.VOICEBOX_CONFIG.API_BASE_URL) ||
+  "https://voicebox-api-zmw2.onrender.com";
+const TOKEN_KEY = "voicebox_admin_token";
+const CURRENT_ADMIN_USERNAME_KEY = "voicebox_current_admin_username";
+
 const state = {
-  reports: [],
-  admins: ["admin", "case_manager", "wellbeing_lead"],
-  codes: ["NACOS-2026-ALPHA"],
+  token: localStorage.getItem(TOKEN_KEY) || "",
+  currentAdminUsername: localStorage.getItem(CURRENT_ADMIN_USERNAME_KEY) || "",
+  pendingDeleteUsername: "",
   loggedIn: false,
-  unhandledPage: 1,
-  handledPage: 1,
-  perPage: 10,
   activeTab: "unhandledTab",
-  queuePage: 1,
-  unhandledSearch: "",
-  handledSearch: "",
-  unhandledTag: "all",
-  handledTag: "all",
+  perPage: 10,
+  unhandled: {
+    page: 1,
+    totalPages: 1,
+    totalReports: 0,
+    search: "",
+    tag: "all",
+    reports: [],
+  },
+  queue: {
+    page: 1,
+    totalPages: 1,
+    totalReports: 0,
+    reports: [],
+  },
+  handled: {
+    page: 1,
+    totalPages: 1,
+    totalReports: 0,
+    search: "",
+    tag: "all",
+    reports: [],
+  },
+  stats: {
+    totalReports: 0,
+    totalThisWeek: 0,
+    totalToday: 0,
+    handledRatio: 0,
+  },
+  admins: [],
 };
 
 const adminGateway = document.getElementById("adminGateway");
@@ -31,117 +59,8 @@ const unhandledTagFilter = document.getElementById("unhandledTagFilter");
 const handledTagFilter = document.getElementById("handledTagFilter");
 const mobileMenuToggle = document.getElementById("mobileMenuToggle");
 const topControls = document.getElementById("topControls");
-
-if (mobileMenuToggle && topControls) {
-  mobileMenuToggle.addEventListener("click", () => {
-    const isOpen = topControls.classList.toggle("open");
-    mobileMenuToggle.setAttribute("aria-expanded", String(isOpen));
-  });
-
-  document.addEventListener("click", (event) => {
-    const target = event.target;
-    if (!(target instanceof Node)) return;
-    if (topControls.contains(target) || mobileMenuToggle.contains(target))
-      return;
-    topControls.classList.remove("open");
-    mobileMenuToggle.setAttribute("aria-expanded", "false");
-  });
-}
-
-function seededReports() {
-  return [
-    {
-      id: 1,
-      title: "Lab supervisor ignored chemical spill alarm",
-      comment:
-        "During Organic Chem practical in Block C, a solvent spill alarm rang but we were told to continue. Two students felt dizzy and left the room.",
-      tag: "Lab Safety",
-      identity: "Anonymous",
-      status: "unhandled",
-      adminNote: "",
-      createdAt: new Date(2026, 3, 7, 10, 12).toISOString(),
-    },
-    {
-      id: 2,
-      title: "Repeated mockery in tutorial group",
-      comment:
-        "My pronunciation is mocked every Tuesday in tutorial T-14 by two classmates. I stopped speaking in sessions because of it.",
-      tag: "Mockery",
-      identity: "Anonymous",
-      status: "unhandled",
-      adminNote: "",
-      createdAt: new Date(2026, 3, 6, 15, 8).toISOString(),
-    },
-    {
-      id: 3,
-      title: "Hostel corridor lights off for days",
-      comment:
-        "A wing in Hall 3 has had no corridor lights for four nights. There was a theft report yesterday and students are scared to pass there.",
-      tag: "Hostel Safety",
-      identity: "Student-2481",
-      status: "queued",
-      adminNote:
-        "Maintenance and hall security notified. Following up tonight.",
-      createdAt: new Date(2026, 3, 5, 20, 4).toISOString(),
-    },
-    {
-      id: 4,
-      title: "Unfair penalty for missing attendance",
-      comment:
-        "I was marked absent despite submitting a hospital letter. Course adviser rejected appeal without review and cut continuous assessment marks.",
-      tag: "Unfair Academic Challenge",
-      identity: "Anonymous",
-      status: "unhandled",
-      adminNote: "",
-      createdAt: new Date(2026, 3, 4, 9, 33).toISOString(),
-    },
-    {
-      id: 5,
-      title: "Threatening note left on desk",
-      comment:
-        "I found a note saying I should stop attending night classes or I would regret it. This happened twice this week in LT-2.",
-      tag: "Peer Threat",
-      identity: "Anonymous",
-      status: "queued",
-      adminNote: "Campus patrol requested around LT-2 evening sessions.",
-      createdAt: new Date(2026, 3, 3, 18, 45).toISOString(),
-    },
-    {
-      id: 6,
-      title: "Counselling referral took too long",
-      comment:
-        "I asked student affairs for urgent counselling support after panic attacks but got a response only after 12 days.",
-      tag: "Mental Health Distress",
-      identity: "Student-3014",
-      status: "handled",
-      adminNote:
-        "Priority protocol updated with counselling unit and follow-up completed.",
-      createdAt: new Date(2026, 3, 2, 11, 20).toISOString(),
-    },
-    {
-      id: 7,
-      title: "Harassment near faculty parking",
-      comment:
-        "A non-student waits by the parking gate and makes comments to female students in the evening. Security said no report was filed.",
-      tag: "Harassment",
-      identity: "Anonymous",
-      status: "unhandled",
-      adminNote: "",
-      createdAt: new Date(2026, 3, 2, 19, 9).toISOString(),
-    },
-    {
-      id: 8,
-      title: "Lecturer used insulting remarks in class",
-      comment:
-        "In Econometrics class, a lecturer called students 'lazy and useless' when asking questions. This has happened in three sessions.",
-      tag: "Lecturer Misconduct",
-      identity: "Anonymous",
-      status: "handled",
-      adminNote: "Department head engaged and formal warning issued.",
-      createdAt: new Date(2026, 3, 1, 13, 50).toISOString(),
-    },
-  ];
-}
+const generatedCodeEl = document.getElementById("generatedCode");
+const copyMembershipCodeBtn = document.getElementById("copyMembershipCodeBtn");
 
 function switchAuthMode(mode) {
   const isLogin = mode === "login";
@@ -153,6 +72,91 @@ function switchAuthMode(mode) {
   authStatus.textContent = "";
 }
 
+function showInfo(message, isError = false) {
+  authStatus.textContent = message;
+  authStatus.style.color = isError ? "var(--danger)" : "var(--muted)";
+}
+
+function setCopyButtonState({ visible, copied = false } = {}) {
+  if (!copyMembershipCodeBtn) return;
+  copyMembershipCodeBtn.classList.toggle("hidden", !visible);
+  copyMembershipCodeBtn.setAttribute(
+    "aria-label",
+    copied ? "Code copied" : "Copy generated membership code",
+  );
+  copyMembershipCodeBtn.setAttribute("title", copied ? "Copied" : "Copy code");
+}
+
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const temp = document.createElement("textarea");
+  temp.value = text;
+  temp.setAttribute("readonly", "");
+  temp.style.position = "absolute";
+  temp.style.left = "-9999px";
+  document.body.appendChild(temp);
+  temp.select();
+  document.execCommand("copy");
+  document.body.removeChild(temp);
+}
+
+function decodeJwtPayload(token) {
+  if (!token || typeof token !== "string") return null;
+  const parts = token.split(".");
+  if (parts.length !== 3) return null;
+
+  try {
+    const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+    const json = atob(padded);
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}
+
+function resolveUsernameFromToken(token) {
+  const payload = decodeJwtPayload(token);
+  if (!payload || typeof payload !== "object") return "";
+
+  const candidates = [
+    payload.username,
+    payload.userName,
+    payload.user,
+    payload.sub,
+    payload.name,
+  ];
+
+  const found = candidates.find(
+    (item) => typeof item === "string" && item.trim().length,
+  );
+  return found ? found.trim() : "";
+}
+
+function setListLoading(listId, message = "Loading reports...") {
+  const container = document.getElementById(listId);
+  if (!container) return;
+  container.innerHTML = `<article class="entry-card">${message}</article>`;
+}
+
+function setStatsLoading() {
+  const totalReportsEl = document.getElementById("totalReports");
+  if (totalReportsEl) totalReportsEl.textContent = "...";
+  document.getElementById("weeklyTotal").textContent = "...";
+  document.getElementById("todayTotal").textContent = "...";
+  document.getElementById("handledRatio").textContent = "...";
+}
+
+function setAdminsLoading() {
+  const adminList = document.getElementById("adminList");
+  if (!adminList) return;
+  adminList.innerHTML = '<div class="admin-row">Loading admins...</div>';
+}
+
 function formatDate(iso) {
   return new Intl.DateTimeFormat("en", {
     dateStyle: "medium",
@@ -160,130 +164,148 @@ function formatDate(iso) {
   }).format(new Date(iso));
 }
 
+async function apiRequest(path, options = {}) {
+  const { method = "GET", token = "", body, query = {} } = options;
+  const url = new URL(`${API_BASE_URL}${path}`);
+
+  Object.entries(query).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === "") return;
+    url.searchParams.set(key, String(value));
+  });
+
+  const headers = {};
+  if (body !== undefined) {
+    headers["Content-Type"] = "application/json";
+  }
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url.toString(), {
+    method,
+    headers,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+
+  const raw = await response.text();
+  let payload = null;
+  try {
+    payload = raw ? JSON.parse(raw) : null;
+  } catch {
+    payload = null;
+  }
+
+  if (!response.ok) {
+    const message =
+      (payload && (payload.message || payload.error)) ||
+      `Request failed (${response.status})`;
+    throw new Error(message);
+  }
+
+  return payload;
+}
+
+function normalizeStatus(status) {
+  if (status === "Unhandled" || status === "Queue" || status === "Handled") {
+    return status;
+  }
+  return "Unhandled";
+}
+
+function normalizeReport(report) {
+  const tags = Array.isArray(report.tags)
+    ? report.tags
+    : report.tag
+      ? [report.tag]
+      : [];
+
+  return {
+    id: report._id || report.id,
+    title: report.title || "Untitled",
+    comment: report.comment || "",
+    tags,
+    identity: report.identity || "Hidden",
+    status: normalizeStatus(report.status),
+    adminNote: report.adminNote || "",
+    createdAt: report.createdAt || new Date().toISOString(),
+  };
+}
+
+function getViewConfig(tab) {
+  if (tab === "unhandledTab") return state.unhandled;
+  if (tab === "queueTab") return state.queue;
+  return state.handled;
+}
+
+function getStatusFromTab(tab) {
+  if (tab === "unhandledTab") return "Unhandled";
+  if (tab === "queueTab") return "Queue";
+  return "Handled";
+}
+
 function renderEntryCard(report, index) {
   const card = document.createElement("article");
   card.className = "entry-card";
   card.style.animation = `fadeUp 0.45s ease ${index * 0.04}s both`;
-  const adminNote = report.adminNote
-    ? `<div class="entry-meta">Admin Note: ${report.adminNote}</div>`
-    : "";
+  const tagText = report.tags.length ? report.tags.join(", ") : "General";
+  const safeNote = report.adminNote || "No admin note yet.";
+
   card.innerHTML = `
     <div class="entry-head">
       <h4>${report.title}</h4>
       <span class="entry-date">${formatDate(report.createdAt)}</span>
     </div>
-    <div class="entry-meta">Tag: ${report.tag}</div>
+    <div class="entry-meta">Tags: ${tagText}</div>
+    <div class="entry-meta">Status: <span class="status-pill">${report.status}</span></div>
     <p>${report.comment}</p>
-    <div class="entry-meta">Identity: ${report.identity}</div>
-    ${adminNote}
+    <div class="entry-meta">Identity: ${report.identity || "Hidden"}</div>
+    <div class="entry-meta">Admin Note: ${safeNote}</div>
   `;
+
   return card;
 }
 
-function paginate(items, page) {
-  const start = (page - 1) * state.perPage;
-  return items.slice(start, start + state.perPage);
-}
+function renderView(viewKey, listId, pageInfoId, prevId, nextId) {
+  const view = state[viewKey];
+  const container = document.getElementById(listId);
+  container.innerHTML = "";
 
-function applyFilters(items, query, tag) {
-  const normalizedQuery = query.trim().toLowerCase();
-  return items.filter((report) => {
-    const textMatch =
-      !normalizedQuery ||
-      report.title.toLowerCase().includes(normalizedQuery) ||
-      report.comment.toLowerCase().includes(normalizedQuery);
-    const tagMatch = tag === "all" || report.tag === tag;
-    return textMatch && tagMatch;
-  });
-}
+  if (!view.reports.length) {
+    container.innerHTML =
+      '<article class="entry-card">No reports found.</article>';
+  }
 
-function updatePageInfo(labelId, page, totalPages) {
-  const el = document.getElementById(labelId);
-  el.textContent = `Page ${page} of ${totalPages || 1}`;
-}
-
-function renderReports() {
-  const unhandled = applyFilters(
-    state.reports.filter((r) => r.status === "unhandled"),
-    state.unhandledSearch,
-    state.unhandledTag,
-  );
-  const queued = state.reports.filter((r) => r.status === "queued");
-  const handled = applyFilters(
-    state.reports.filter((r) => r.status === "handled"),
-    state.handledSearch,
-    state.handledTag,
-  );
-
-  const unhandledPages = Math.max(
-    1,
-    Math.ceil(unhandled.length / state.perPage),
-  );
-  const handledPages = Math.max(1, Math.ceil(handled.length / state.perPage));
-  const queuePages = Math.max(1, Math.ceil(queued.length / state.perPage));
-
-  if (state.unhandledPage > unhandledPages)
-    state.unhandledPage = unhandledPages;
-  if (state.handledPage > handledPages) state.handledPage = handledPages;
-  if (state.queuePage > queuePages) state.queuePage = queuePages;
-
-  const unhandledList = document.getElementById("unhandledList");
-  const queueList = document.getElementById("queueList");
-  const handledList = document.getElementById("handledList");
-
-  unhandledList.innerHTML = "";
-  queueList.innerHTML = "";
-  handledList.innerHTML = "";
-
-  paginate(unhandled, state.unhandledPage).forEach((report, idx) => {
+  view.reports.forEach((report, idx) => {
     const card = renderEntryCard(report, idx);
     const actions = document.createElement("div");
     actions.className = "entry-actions";
-    actions.innerHTML = `<button class="btn btn-accent queue-action" data-id="${report.id}">Click to Queue + Add Comment</button>`;
+
+    if (viewKey === "unhandled") {
+      actions.innerHTML = `<button class="btn btn-accent queue-action" data-id="${report.id}">Click to Queue + Add Comment</button>`;
+    }
+    if (viewKey === "queue") {
+      actions.innerHTML = `<button class="btn btn-accent mark-handled" data-id="${report.id}">Click to Mark as Handled</button>`;
+    }
+    if (viewKey === "handled") {
+      actions.innerHTML = `<button class="btn btn-ghost return-queue" data-id="${report.id}">Click to Return to Queue</button>`;
+    }
+
     card.appendChild(actions);
-    unhandledList.appendChild(card);
+    container.appendChild(card);
   });
 
-  paginate(queued, state.queuePage).forEach((report, idx) => {
-    const card = renderEntryCard(report, idx);
-    const actions = document.createElement("div");
-    actions.className = "entry-actions";
-    actions.innerHTML = `<button class="btn btn-accent mark-handled" data-id="${report.id}">Click to Mark as Handled</button>`;
-    card.appendChild(actions);
-    queueList.appendChild(card);
-  });
+  const pageInfo = document.getElementById(pageInfoId);
+  pageInfo.textContent = `Page ${view.page} of ${view.totalPages || 1}`;
 
-  paginate(handled, state.handledPage).forEach((report, idx) => {
-    const card = renderEntryCard(report, idx);
-    const actions = document.createElement("div");
-    actions.className = "entry-actions";
-    actions.innerHTML = `<button class="btn btn-ghost return-queue" data-id="${report.id}">Click to Return to Queue</button>`;
-    card.appendChild(actions);
-    handledList.appendChild(card);
-  });
-
-  updatePageInfo("unhandledPageInfo", state.unhandledPage, unhandledPages);
-  updatePageInfo("queuePageInfo", state.queuePage, queuePages);
-  updatePageInfo("handledPageInfo", state.handledPage, handledPages);
-
-  document.getElementById("unhandledPrev").disabled = state.unhandledPage === 1;
-  document.getElementById("unhandledNext").disabled =
-    state.unhandledPage === unhandledPages;
-  document.getElementById("queuePrev").disabled = state.queuePage === 1;
-  document.getElementById("queueNext").disabled =
-    state.queuePage === queuePages;
-  document.getElementById("handledPrev").disabled = state.handledPage === 1;
-  document.getElementById("handledNext").disabled =
-    state.handledPage === handledPages;
+  document.getElementById(prevId).disabled = view.page <= 1;
+  document.getElementById(nextId).disabled = view.page >= view.totalPages;
 }
 
 function drawPieChart() {
   const canvas = document.getElementById("statusChart");
   const ctx = canvas.getContext("2d");
-  const handled = state.reports.filter((r) => r.status === "handled").length;
-  const unhandled = state.reports.length - handled;
-  const total = Math.max(state.reports.length, 1);
-  const handledAngle = (handled / total) * Math.PI * 2;
+  const handledAngle =
+    (Math.max(0, Math.min(100, state.stats.handledRatio)) / 100) * Math.PI * 2;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const centerX = canvas.width / 2;
@@ -316,72 +338,200 @@ function drawPieChart() {
 
   ctx.fillStyle = textColor;
   ctx.font = '500 13px "IBM Plex Mono"';
-  ctx.fillText(`Handled: ${handled}`, 20, 332);
-  ctx.fillText(`Unhandled: ${unhandled}`, 178, 332);
+  ctx.fillText(`Handled: ${state.stats.handledRatio}%`, 20, 332);
+  ctx.fillText(`Reports: ${state.stats.totalReports}`, 178, 332);
 }
 
-function updateStats() {
-  const now = new Date();
-  const weekAgo = new Date(now);
-  weekAgo.setDate(now.getDate() - 7);
-  const todayString = now.toDateString();
-
-  const weekly = state.reports.filter(
-    (r) => new Date(r.createdAt) >= weekAgo,
-  ).length;
-  const today = state.reports.filter(
-    (r) => new Date(r.createdAt).toDateString() === todayString,
-  ).length;
-  const handled = state.reports.filter((r) => r.status === "handled").length;
-  const ratio = Math.round((handled / Math.max(state.reports.length, 1)) * 100);
-
-  document.getElementById("weeklyTotal").textContent = weekly;
-  document.getElementById("todayTotal").textContent = today;
-  document.getElementById("handledRatio").textContent = `${ratio}%`;
-
+function updateStatsUI() {
+  const totalReportsEl = document.getElementById("totalReports");
+  if (totalReportsEl) {
+    totalReportsEl.textContent = state.stats.totalReports;
+  }
+  document.getElementById("weeklyTotal").textContent =
+    state.stats.totalThisWeek;
+  document.getElementById("todayTotal").textContent = state.stats.totalToday;
+  document.getElementById("handledRatio").textContent =
+    `${state.stats.handledRatio}%`;
   drawPieChart();
+}
+
+async function loadStats() {
+  setStatsLoading();
+  const payload = await apiRequest("/admin/stats", { token: state.token });
+  const data = payload && payload.data ? payload.data : {};
+  state.stats = {
+    totalReports: Number(data.totalReports || 0),
+    totalThisWeek: Number(data.totalThisWeek || 0),
+    totalToday: Number(data.totalToday || 0),
+    handledRatio: Number(data.handledRatio || 0),
+  };
+  updateStatsUI();
+}
+
+function collectKnownTags() {
+  const mapTags = (reports) =>
+    reports.flatMap((report) =>
+      Array.isArray(report.tags) ? report.tags : [],
+    );
+  const allTags = [
+    ...mapTags(state.unhandled.reports),
+    ...mapTags(state.queue.reports),
+    ...mapTags(state.handled.reports),
+  ];
+  return [...new Set(allTags)].sort((a, b) => a.localeCompare(b));
+}
+
+function renderTagOptions() {
+  const tags = collectKnownTags();
+  const options = tags
+    .map((tag) => `<option value="${tag}">${tag}</option>`)
+    .join("");
+  unhandledTagFilter.innerHTML = `<option value="all">All tags</option>${options}`;
+  handledTagFilter.innerHTML = `<option value="all">All tags</option>${options}`;
+  unhandledTagFilter.value = state.unhandled.tag;
+  handledTagFilter.value = state.handled.tag;
+}
+
+async function loadReportsForTab(tabId) {
+  if (tabId === "unhandledTab") {
+    setListLoading("unhandledList");
+  }
+  if (tabId === "queueTab") {
+    setListLoading("queueList");
+  }
+  if (tabId === "handledTab") {
+    setListLoading("handledList");
+  }
+
+  const view = getViewConfig(tabId);
+  const status = getStatusFromTab(tabId);
+  const query = {
+    status,
+    page: view.page,
+    limit: state.perPage,
+  };
+
+  if (status !== "Queue") {
+    if (view.search && view.search.trim()) query.search = view.search.trim();
+    if (view.tag !== "all") query.tags = view.tag;
+  }
+
+  const payload = await apiRequest("/admin/reports", {
+    token: state.token,
+    query,
+  });
+
+  const reports = Array.isArray(payload && payload.reports)
+    ? payload.reports
+    : [];
+  const pagination = payload && payload.pagination ? payload.pagination : {};
+
+  view.reports = reports.map(normalizeReport);
+  view.totalPages = Number(pagination.totalPages || 1) || 1;
+  view.totalReports = Number(pagination.totalReports || 0);
+
+  if (view.page > view.totalPages) {
+    view.page = view.totalPages;
+  }
+
+  if (tabId === "unhandledTab") {
+    renderView(
+      "unhandled",
+      "unhandledList",
+      "unhandledPageInfo",
+      "unhandledPrev",
+      "unhandledNext",
+    );
+  }
+  if (tabId === "queueTab") {
+    renderView("queue", "queueList", "queuePageInfo", "queuePrev", "queueNext");
+  }
+  if (tabId === "handledTab") {
+    renderView(
+      "handled",
+      "handledList",
+      "handledPageInfo",
+      "handledPrev",
+      "handledNext",
+    );
+  }
+}
+
+function normalizeAdmins(payload) {
+  const rawAdmins =
+    (payload && payload.admins) ||
+    (payload && payload.data && payload.data.admins) ||
+    (payload && payload.data) ||
+    [];
+  if (!Array.isArray(rawAdmins)) return [];
+
+  return rawAdmins
+    .map((item) => {
+      if (typeof item === "string") return item;
+      if (item && typeof item.username === "string") return item.username;
+      return "";
+    })
+    .filter(Boolean);
 }
 
 function renderAdmins() {
   const adminList = document.getElementById("adminList");
   adminList.innerHTML = "";
 
-  state.admins.forEach((admin, idx) => {
+  if (!state.admins.length) {
+    adminList.innerHTML = '<div class="admin-row">No admins found.</div>';
+    return;
+  }
+
+  state.admins.forEach((admin) => {
+    const isCurrentAdmin =
+      state.currentAdminUsername &&
+      admin.toLowerCase() === state.currentAdminUsername.toLowerCase();
+    const isPendingDelete = state.pendingDeleteUsername === admin;
+
     const row = document.createElement("div");
     row.className = "admin-row";
-    row.innerHTML = `
-      <span class="mono">${admin}</span>
-      <button class="remove-admin" data-index="${idx}">Remove</button>
-    `;
+
+    if (isCurrentAdmin) {
+      row.innerHTML = `
+        <span class="mono">${admin}</span>
+        <span class="status-pill" title="Signed in admin">You</span>
+      `;
+    } else if (isPendingDelete) {
+      row.innerHTML = `
+        <span class="mono">${admin}</span>
+        <div class="entry-actions">
+          <button class="remove-admin-confirm" data-username="${admin}">Confirm</button>
+          <button class="btn btn-ghost remove-admin-cancel" data-username="${admin}">Cancel</button>
+        </div>
+      `;
+    } else {
+      row.innerHTML = `
+        <span class="mono">${admin}</span>
+        <button class="remove-admin" data-username="${admin}">Remove</button>
+      `;
+    }
+
     adminList.appendChild(row);
   });
 }
 
-function renderTagOptions() {
-  const uniqueTags = [...new Set(state.reports.map((report) => report.tag))];
-  const options = uniqueTags
-    .sort((a, b) => a.localeCompare(b))
-    .map((tag) => `<option value="${tag}">${tag}</option>`)
-    .join("");
-  unhandledTagFilter.innerHTML = `<option value="all">All tags</option>${options}`;
-  handledTagFilter.innerHTML = `<option value="all">All tags</option>${options}`;
-  unhandledTagFilter.value = state.unhandledTag;
-  handledTagFilter.value = state.handledTag;
-}
-
-function showDashboard() {
-  state.loggedIn = true;
-  adminGateway.classList.add("hidden");
-  adminDashboard.classList.remove("hidden");
-  adminDashboard.scrollIntoView({ behavior: "smooth", block: "start" });
-  renderTagOptions();
-  renderReports();
-  updateStats();
+async function loadAdmins() {
+  setAdminsLoading();
+  const payload = await apiRequest("/admin/admins", { token: state.token });
+  state.admins = normalizeAdmins(payload);
   renderAdmins();
 }
 
-function showInfo(message) {
-  authStatus.textContent = message;
+async function loadDashboardData() {
+  await Promise.all([
+    loadReportsForTab("unhandledTab"),
+    loadReportsForTab("queueTab"),
+    loadReportsForTab("handledTab"),
+    loadStats(),
+    loadAdmins(),
+  ]);
+  renderTagOptions();
 }
 
 function setActiveTab(tabId) {
@@ -394,213 +544,455 @@ function setActiveTab(tabId) {
   });
 }
 
-showLogin.addEventListener("click", () => switchAuthMode("login"));
-showSignup.addEventListener("click", () => switchAuthMode("signup"));
+function showDashboard() {
+  state.loggedIn = true;
+  adminGateway.classList.add("hidden");
+  adminDashboard.classList.remove("hidden");
+  adminDashboard.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
-[...document.querySelectorAll(".info-btn")].forEach((btn) => {
-  btn.addEventListener("click", () => {
-    showInfo(btn.dataset.info || "Credential guidance unavailable.");
-  });
-});
-
-loginForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const user = document.getElementById("adminUsername").value.trim();
-  const pass = document.getElementById("adminPassword").value.trim();
-  if (state.admins.includes(user) && pass.length >= 6) {
-    authStatus.textContent = "Access granted. Opening secure dashboard...";
-    showDashboard();
-    return;
-  }
-  authStatus.textContent = "Access denied. Verify your authorized credentials.";
-});
-
-signupForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const username = document.getElementById("signupUsername").value.trim();
-  const code = document.getElementById("membershipCode").value.trim();
-
-  if (!username) {
-    authStatus.textContent = "Please provide a username.";
-    return;
-  }
-  if (!state.codes.includes(code)) {
-    authStatus.textContent = "Membership code is invalid or expired.";
-    return;
-  }
-  if (state.admins.includes(username)) {
-    authStatus.textContent = "That username already exists.";
-    return;
-  }
-  state.admins.push(username);
-  authStatus.textContent = "Admin account created. Proceed to sign in.";
-  switchAuthMode("login");
-});
-
-tabButtons.forEach((btn) => {
-  btn.addEventListener("click", () => setActiveTab(btn.dataset.tab));
-});
-
-unhandledSearch.addEventListener("input", (event) => {
-  state.unhandledSearch = event.target.value;
-  state.unhandledPage = 1;
-  renderReports();
-});
-
-handledSearch.addEventListener("input", (event) => {
-  state.handledSearch = event.target.value;
-  state.handledPage = 1;
-  renderReports();
-});
-
-unhandledTagFilter.addEventListener("change", (event) => {
-  state.unhandledTag = event.target.value;
-  state.unhandledPage = 1;
-  renderReports();
-});
-
-handledTagFilter.addEventListener("change", (event) => {
-  state.handledTag = event.target.value;
-  state.handledPage = 1;
-  renderReports();
-});
-
-document.getElementById("unhandledPrev").addEventListener("click", () => {
-  state.unhandledPage = Math.max(1, state.unhandledPage - 1);
-  renderReports();
-});
-
-document.getElementById("unhandledNext").addEventListener("click", () => {
-  state.unhandledPage += 1;
-  renderReports();
-});
-
-document.getElementById("handledPrev").addEventListener("click", () => {
-  state.handledPage = Math.max(1, state.handledPage - 1);
-  renderReports();
-});
-
-document.getElementById("handledNext").addEventListener("click", () => {
-  state.handledPage += 1;
-  renderReports();
-});
-
-document.getElementById("queuePrev").addEventListener("click", () => {
-  state.queuePage = Math.max(1, state.queuePage - 1);
-  renderReports();
-});
-
-document.getElementById("queueNext").addEventListener("click", () => {
-  state.queuePage += 1;
-  renderReports();
-});
-
-document.getElementById("generateCodeBtn").addEventListener("click", () => {
-  const code = `NACOS-${new Date().getFullYear()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
-  state.codes.push(code);
-  document.getElementById("generatedCode").textContent =
-    `New membership code: ${code}`;
-});
-
-document.getElementById("adminList").addEventListener("click", (event) => {
-  const target = event.target;
-  if (!(target instanceof HTMLButtonElement)) return;
-  if (!target.classList.contains("remove-admin")) return;
-
-  const index = Number(target.dataset.index);
-  if (Number.isNaN(index)) return;
-  if (state.admins.length <= 1) {
-    document.getElementById("generatedCode").textContent =
-      "At least one admin must remain.";
-    return;
-  }
-
-  state.admins.splice(index, 1);
-  renderAdmins();
-});
-
-document.getElementById("unhandledList").addEventListener("click", (event) => {
-  const target = event.target;
-  if (!(target instanceof HTMLButtonElement)) return;
-  if (!target.classList.contains("queue-action")) return;
-
-  const id = Number(target.dataset.id);
-  const report = state.reports.find((item) => item.id === id);
-  if (!report) return;
-
-  const adminComment = window.prompt(
-    "Add a queue comment for this case:",
-    report.adminNote || "",
-  );
-  if (adminComment === null) return;
-  report.adminNote =
-    adminComment.trim() || "Queued for review by assigned officer.";
-  report.status = "queued";
-  state.unhandledPage = 1;
-  renderReports();
-});
-
-document.getElementById("queueList").addEventListener("click", (event) => {
-  const target = event.target;
-  if (!(target instanceof HTMLButtonElement)) return;
-  if (!target.classList.contains("mark-handled")) return;
-
-  const id = Number(target.dataset.id);
-  const report = state.reports.find((item) => item.id === id);
-  if (!report) return;
-
-  const confirmed = window.confirm(
-    "Mark this queued case as handled? This will move it to Handled reports.",
-  );
-  if (!confirmed) return;
-
-  report.status = "handled";
-  if (!report.adminNote) {
-    report.adminNote = "Case resolved and action completed.";
-  }
-  renderReports();
-  updateStats();
-});
-
-document.getElementById("handledList").addEventListener("click", (event) => {
-  const target = event.target;
-  if (!(target instanceof HTMLButtonElement)) return;
-  if (!target.classList.contains("return-queue")) return;
-
-  const id = Number(target.dataset.id);
-  const report = state.reports.find((item) => item.id === id);
-  if (!report) return;
-
-  report.status = "queued";
-  report.adminNote =
-    report.adminNote || "Returned to queue for additional follow-up.";
-  renderReports();
-  updateStats();
-});
-
-document.getElementById("logoutBtn").addEventListener("click", () => {
+function logout() {
   state.loggedIn = false;
+  state.token = "";
+  state.currentAdminUsername = "";
+  state.pendingDeleteUsername = "";
+  generatedCodeEl.textContent = "";
+  generatedCodeEl.dataset.code = "";
+  setCopyButtonState({ visible: false });
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(CURRENT_ADMIN_USERNAME_KEY);
   adminDashboard.classList.add("hidden");
   adminGateway.classList.remove("hidden");
   setActiveTab("unhandledTab");
-  authStatus.textContent = "Logged out.";
-});
+  showInfo("Logged out.", false);
+}
 
-themeToggle.addEventListener("click", () => {
-  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-  document.documentElement.setAttribute(
-    "data-theme",
-    isDark ? "light" : "dark",
-  );
-  if (state.loggedIn) drawPieChart();
-});
+async function updateReportStatus(reportId, status, promptText, fallbackNote) {
+  let adminNote = "";
+  if (status === "Queue" || status === "Handled") {
+    const noteInput = window.prompt(promptText, fallbackNote || "");
+    if (noteInput === null) return;
+    adminNote = noteInput.trim();
+    if (adminNote.length <= 10) {
+      showInfo("Admin note must be more than 10 characters.", true);
+      return;
+    }
+  }
 
-function init() {
-  state.reports = seededReports();
-  document.documentElement.setAttribute("data-theme", "light");
+  const body = { status };
+  if (adminNote) body.adminNote = adminNote;
+
+  await apiRequest(`/admin/reports/${reportId}`, {
+    method: "PATCH",
+    token: state.token,
+    body,
+  });
+
+  await Promise.all([
+    loadReportsForTab("unhandledTab"),
+    loadReportsForTab("queueTab"),
+    loadReportsForTab("handledTab"),
+    loadStats(),
+  ]);
   renderTagOptions();
-  renderReports();
-  updateStats();
+}
+
+function bindAuthEvents() {
+  showLogin.addEventListener("click", () => switchAuthMode("login"));
+  showSignup.addEventListener("click", () => switchAuthMode("signup"));
+
+  [...document.querySelectorAll(".info-btn")].forEach((btn) => {
+    btn.addEventListener("click", () => {
+      showInfo(btn.dataset.info || "Credential guidance unavailable.");
+    });
+  });
+
+  loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const username = document.getElementById("adminUsername").value.trim();
+    const password = document.getElementById("adminPassword").value.trim();
+
+    try {
+      showInfo("Signing in to secure dashboard...");
+      const payload = await apiRequest("/auth/login", {
+        method: "POST",
+        body: { username, password },
+      });
+
+      const token = payload && payload.token ? payload.token : "";
+      if (!token) throw new Error("No token received from server.");
+
+      state.token = token;
+      state.currentAdminUsername = username;
+      state.pendingDeleteUsername = "";
+      localStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(CURRENT_ADMIN_USERNAME_KEY, username);
+
+      showDashboard();
+      await loadDashboardData();
+      showInfo("Access granted.");
+    } catch (error) {
+      showInfo(error.message || "Login failed.", true);
+    }
+  });
+
+  signupForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const username = document.getElementById("signupUsername").value.trim();
+    const password = document.getElementById("signupPassword").value.trim();
+    const membershipCode = document
+      .getElementById("membershipCode")
+      .value.trim();
+
+    try {
+      showInfo("Creating admin account...");
+      await apiRequest("/auth/register", {
+        method: "POST",
+        body: { username, password, membershipCode },
+      });
+      showInfo("Admin account created. Proceed to sign in.");
+      switchAuthMode("login");
+      signupForm.reset();
+    } catch (error) {
+      showInfo(error.message || "Registration failed.", true);
+    }
+  });
+}
+
+function bindDashboardEvents() {
+  tabButtons.forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const tabId = btn.dataset.tab;
+      setActiveTab(tabId);
+
+      try {
+        if (tabId === "statsTab") {
+          await loadStats();
+        } else if (tabId === "adminsTab") {
+          await loadAdmins();
+        } else {
+          await loadReportsForTab(tabId);
+        }
+      } catch (error) {
+        showInfo(error.message || "Unable to load tab data.", true);
+      }
+    });
+  });
+
+  unhandledSearch.addEventListener("input", async (event) => {
+    state.unhandled.search = event.target.value;
+    state.unhandled.page = 1;
+    try {
+      await loadReportsForTab("unhandledTab");
+    } catch (error) {
+      showInfo(error.message || "Failed to filter unhandled reports.", true);
+    }
+  });
+
+  handledSearch.addEventListener("input", async (event) => {
+    state.handled.search = event.target.value;
+    state.handled.page = 1;
+    try {
+      await loadReportsForTab("handledTab");
+    } catch (error) {
+      showInfo(error.message || "Failed to filter handled reports.", true);
+    }
+  });
+
+  unhandledTagFilter.addEventListener("change", async (event) => {
+    state.unhandled.tag = event.target.value;
+    state.unhandled.page = 1;
+    try {
+      await loadReportsForTab("unhandledTab");
+    } catch (error) {
+      showInfo(error.message || "Failed to apply tag filter.", true);
+    }
+  });
+
+  handledTagFilter.addEventListener("change", async (event) => {
+    state.handled.tag = event.target.value;
+    state.handled.page = 1;
+    try {
+      await loadReportsForTab("handledTab");
+    } catch (error) {
+      showInfo(error.message || "Failed to apply tag filter.", true);
+    }
+  });
+
+  document
+    .getElementById("unhandledPrev")
+    .addEventListener("click", async () => {
+      if (state.unhandled.page <= 1) return;
+      state.unhandled.page -= 1;
+      try {
+        await loadReportsForTab("unhandledTab");
+      } catch (error) {
+        showInfo(error.message || "Failed to load previous page.", true);
+      }
+    });
+
+  document
+    .getElementById("unhandledNext")
+    .addEventListener("click", async () => {
+      if (state.unhandled.page >= state.unhandled.totalPages) return;
+      state.unhandled.page += 1;
+      try {
+        await loadReportsForTab("unhandledTab");
+      } catch (error) {
+        showInfo(error.message || "Failed to load next page.", true);
+      }
+    });
+
+  document.getElementById("queuePrev").addEventListener("click", async () => {
+    if (state.queue.page <= 1) return;
+    state.queue.page -= 1;
+    try {
+      await loadReportsForTab("queueTab");
+    } catch (error) {
+      showInfo(error.message || "Failed to load previous page.", true);
+    }
+  });
+
+  document.getElementById("queueNext").addEventListener("click", async () => {
+    if (state.queue.page >= state.queue.totalPages) return;
+    state.queue.page += 1;
+    try {
+      await loadReportsForTab("queueTab");
+    } catch (error) {
+      showInfo(error.message || "Failed to load next page.", true);
+    }
+  });
+
+  document.getElementById("handledPrev").addEventListener("click", async () => {
+    if (state.handled.page <= 1) return;
+    state.handled.page -= 1;
+    try {
+      await loadReportsForTab("handledTab");
+    } catch (error) {
+      showInfo(error.message || "Failed to load previous page.", true);
+    }
+  });
+
+  document.getElementById("handledNext").addEventListener("click", async () => {
+    if (state.handled.page >= state.handled.totalPages) return;
+    state.handled.page += 1;
+    try {
+      await loadReportsForTab("handledTab");
+    } catch (error) {
+      showInfo(error.message || "Failed to load next page.", true);
+    }
+  });
+
+  document
+    .getElementById("generateCodeBtn")
+    .addEventListener("click", async () => {
+      try {
+        const payload = await apiRequest("/admin/membership-code", {
+          method: "POST",
+          token: state.token,
+        });
+
+        const data = payload && payload.data ? payload.data : payload;
+        const code = data && data.code ? data.code : "(code unavailable)";
+        const expiresAt =
+          data && data.expiresAt
+            ? ` (expires: ${formatDate(data.expiresAt)})`
+            : "";
+        generatedCodeEl.textContent = `New membership code: ${code}${expiresAt}`;
+        generatedCodeEl.dataset.code = code;
+        setCopyButtonState({ visible: code !== "(code unavailable)" });
+      } catch (error) {
+        generatedCodeEl.dataset.code = "";
+        setCopyButtonState({ visible: false });
+        showInfo(error.message || "Could not generate membership code.", true);
+      }
+    });
+
+  if (copyMembershipCodeBtn) {
+    copyMembershipCodeBtn.addEventListener("click", async () => {
+      const code = generatedCodeEl.dataset.code || "";
+      if (!code) return;
+
+      try {
+        await copyTextToClipboard(code);
+        setCopyButtonState({ visible: true, copied: true });
+        showInfo("Membership code copied.");
+        window.setTimeout(() => {
+          setCopyButtonState({ visible: true, copied: false });
+        }, 1300);
+      } catch {
+        showInfo("Could not copy code. Please copy it manually.", true);
+      }
+    });
+  }
+
+  document
+    .getElementById("adminList")
+    .addEventListener("click", async (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLButtonElement)) return;
+
+      const username = target.dataset.username;
+      if (!username) return;
+
+      if (target.classList.contains("remove-admin")) {
+        state.pendingDeleteUsername = username;
+        renderAdmins();
+        return;
+      }
+
+      if (target.classList.contains("remove-admin-cancel")) {
+        state.pendingDeleteUsername = "";
+        renderAdmins();
+        return;
+      }
+
+      if (!target.classList.contains("remove-admin-confirm")) return;
+
+      try {
+        await apiRequest(`/admin/admins/${encodeURIComponent(username)}`, {
+          method: "DELETE",
+          token: state.token,
+        });
+        state.pendingDeleteUsername = "";
+        await loadAdmins();
+        showInfo(`Admin "${username}" removed.`);
+      } catch (error) {
+        showInfo(error.message || "Could not delete admin.", true);
+      }
+    });
+
+  document
+    .getElementById("unhandledList")
+    .addEventListener("click", async (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLButtonElement)) return;
+      if (!target.classList.contains("queue-action")) return;
+
+      const reportId = target.dataset.id;
+      if (!reportId) return;
+
+      try {
+        await updateReportStatus(
+          reportId,
+          "Queue",
+          "Add a queue note for this case (must be >10 characters):",
+          "Escalated for follow-up by case manager.",
+        );
+      } catch (error) {
+        showInfo(error.message || "Could not queue report.", true);
+      }
+    });
+
+  document
+    .getElementById("queueList")
+    .addEventListener("click", async (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLButtonElement)) return;
+      if (!target.classList.contains("mark-handled")) return;
+
+      const reportId = target.dataset.id;
+      if (!reportId) return;
+
+      const confirmed = window.confirm("Mark this queued case as handled?");
+      if (!confirmed) return;
+
+      try {
+        await updateReportStatus(
+          reportId,
+          "Handled",
+          "Add a resolution note (must be >10 characters):",
+          "Case reviewed and action completed.",
+        );
+      } catch (error) {
+        showInfo(error.message || "Could not mark report as handled.", true);
+      }
+    });
+
+  document
+    .getElementById("handledList")
+    .addEventListener("click", async (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLButtonElement)) return;
+      if (!target.classList.contains("return-queue")) return;
+
+      const reportId = target.dataset.id;
+      if (!reportId) return;
+
+      try {
+        await updateReportStatus(
+          reportId,
+          "Queue",
+          "Add a follow-up note before returning this case to queue:",
+          "Returned to queue for additional follow-up.",
+        );
+      } catch (error) {
+        showInfo(error.message || "Could not return report to queue.", true);
+      }
+    });
+
+  document.getElementById("logoutBtn").addEventListener("click", logout);
+}
+
+function bindShellEvents() {
+  if (mobileMenuToggle && topControls) {
+    mobileMenuToggle.addEventListener("click", () => {
+      const isOpen = topControls.classList.toggle("open");
+      mobileMenuToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Node)) return;
+      if (topControls.contains(target) || mobileMenuToggle.contains(target)) {
+        return;
+      }
+      topControls.classList.remove("open");
+      mobileMenuToggle.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  themeToggle.addEventListener("click", () => {
+    const isDark =
+      document.documentElement.getAttribute("data-theme") === "dark";
+    document.documentElement.setAttribute(
+      "data-theme",
+      isDark ? "light" : "dark",
+    );
+    if (state.loggedIn) drawPieChart();
+  });
+}
+
+async function tryResumeSession() {
+  if (!state.token) return;
+
+  try {
+    if (!state.currentAdminUsername) {
+      state.currentAdminUsername = resolveUsernameFromToken(state.token);
+      if (state.currentAdminUsername) {
+        localStorage.setItem(
+          CURRENT_ADMIN_USERNAME_KEY,
+          state.currentAdminUsername,
+        );
+      }
+    }
+
+    showDashboard();
+    await loadDashboardData();
+    showInfo("Session restored.");
+  } catch {
+    logout();
+  }
+}
+
+async function init() {
+  document.documentElement.setAttribute("data-theme", "light");
+  generatedCodeEl.dataset.code = "";
+  setCopyButtonState({ visible: false });
+  bindShellEvents();
+  bindAuthEvents();
+  bindDashboardEvents();
+  await tryResumeSession();
 }
 
 init();

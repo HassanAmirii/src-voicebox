@@ -141,8 +141,14 @@
                 type="text"
                 id="complaintTitle"
                 placeholder="Short summary of your complaint"
+                maxlength="30"
                 required
               />
+              <small
+                id="titleCounter"
+                class="field-counter"
+                aria-live="polite"
+              ></small>
             </label>
 
             <fieldset class="field">
@@ -204,6 +210,11 @@
                 placeholder="Tell us what happened, where, and when."
                 required
               ></textarea>
+              <small
+                id="commentCounter"
+                class="field-counter"
+                aria-live="polite"
+              ></small>
             </label>
 
             <label class="field">
@@ -213,6 +224,11 @@
                 id="identityBox"
                 placeholder="Name, student ID, email, or phone (optional)"
               />
+              <small
+                id="identityCounter"
+                class="field-counter"
+                aria-live="polite"
+              ></small>
               <small class="identity-note"
                 >We act on every report. Stay anonymous if your details are
                 enough for action; if more context is needed, your identity
@@ -249,6 +265,7 @@
       <p>safer university reporting and response</p>
     </footer>
 
+    <script src="config.js"></script>
     <script src="student.js"></script>
   </body>
 </html>
