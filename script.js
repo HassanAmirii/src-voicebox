@@ -243,6 +243,12 @@ function getStatusFromTab(tab) {
   return "Handled";
 }
 
+function getEmptyStateMessage(viewKey) {
+  if (viewKey === "queue") return "No available queue reports.";
+  if (viewKey === "handled") return "No available handled reports.";
+  return "No available unhandled reports.";
+}
+
 function renderEntryCard(report, index) {
   const card = document.createElement("article");
   card.className = "entry-card";
@@ -271,8 +277,7 @@ function renderView(viewKey, listId, pageInfoId, prevId, nextId) {
   container.innerHTML = "";
 
   if (!view.reports.length) {
-    container.innerHTML =
-      '<article class="entry-card">No reports found.</article>';
+    container.innerHTML = `<article class="entry-card empty-state">${getEmptyStateMessage(viewKey)}</article>`;
   }
 
   view.reports.forEach((report, idx) => {

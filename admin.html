@@ -190,10 +190,10 @@
       >
         <div class="panel-head row-head">
           <h2>Admin Dashboard</h2>
-          <button id="logoutBtn" class="btn btn-ghost">Click to Logout</button>
+          <button id="logoutBtn" class="btn btn-ghost">Logout</button>
         </div>
 
-        <nav class="tab-nav" aria-label="Dashboard tabs">
+        <nav class="tab-nav admin-tab-nav" aria-label="Dashboard tabs">
           <button class="tab-btn active" data-tab="unhandledTab">
             Unhandled
           </button>
@@ -220,12 +220,48 @@
           </div>
           <div id="unhandledList" class="entry-list"></div>
           <div class="pagination">
-            <button id="unhandledPrev" class="btn btn-ghost">
-              Click to View Previous
+            <button
+              id="unhandledPrev"
+              class="btn btn-ghost pagination-btn"
+              aria-label="Previous page"
+              title="Previous page"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                class="pagination-icon"
+              >
+                <path
+                  d="M15 6 9 12l6 6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
             </button>
             <span id="unhandledPageInfo" class="page-info"></span>
-            <button id="unhandledNext" class="btn btn-ghost">
-              Click to View Next
+            <button
+              id="unhandledNext"
+              class="btn btn-ghost pagination-btn"
+              aria-label="Next page"
+              title="Next page"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                class="pagination-icon"
+              >
+                <path
+                  d="M9 6 15 12l-6 6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
             </button>
           </div>
         </div>
@@ -234,12 +270,48 @@
           <h3>Case Queue</h3>
           <div id="queueList" class="entry-list"></div>
           <div class="pagination">
-            <button id="queuePrev" class="btn btn-ghost">
-              Click to View Previous
+            <button
+              id="queuePrev"
+              class="btn btn-ghost pagination-btn"
+              aria-label="Previous page"
+              title="Previous page"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                class="pagination-icon"
+              >
+                <path
+                  d="M15 6 9 12l6 6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
             </button>
             <span id="queuePageInfo" class="page-info"></span>
-            <button id="queueNext" class="btn btn-ghost">
-              Click to View Next
+            <button
+              id="queueNext"
+              class="btn btn-ghost pagination-btn"
+              aria-label="Next page"
+              title="Next page"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                class="pagination-icon"
+              >
+                <path
+                  d="M9 6 15 12l-6 6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
             </button>
           </div>
         </div>
@@ -258,12 +330,48 @@
           </div>
           <div id="handledList" class="entry-list"></div>
           <div class="pagination">
-            <button id="handledPrev" class="btn btn-ghost">
-              Click to View Previous
+            <button
+              id="handledPrev"
+              class="btn btn-ghost pagination-btn"
+              aria-label="Previous page"
+              title="Previous page"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                class="pagination-icon"
+              >
+                <path
+                  d="M15 6 9 12l6 6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
             </button>
             <span id="handledPageInfo" class="page-info"></span>
-            <button id="handledNext" class="btn btn-ghost">
-              Click to View Next
+            <button
+              id="handledNext"
+              class="btn btn-ghost pagination-btn"
+              aria-label="Next page"
+              title="Next page"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                class="pagination-icon"
+              >
+                <path
+                  d="M9 6 15 12l-6 6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
             </button>
           </div>
         </div>

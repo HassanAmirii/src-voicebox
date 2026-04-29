@@ -101,7 +101,7 @@ body {
 }
 
 .brand-sub {
-  margin: 0.15rem 0 0;
+  margin: 0;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -312,6 +312,7 @@ textarea,
 
 [data-theme="dark"] input,
 [data-theme="dark"] textarea,
+[data-theme="dark"] .controls-row select,
 [data-theme="dark"] .switch-btn,
 [data-theme="dark"] .btn,
 [data-theme="dark"] .tab-btn {
@@ -493,6 +494,39 @@ textarea {
   margin-top: 1rem;
 }
 
+.admin-tab-nav {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.admin-tab-nav .tab-btn {
+  width: 100%;
+}
+
+.admin-tab-nav .tab-btn {
+  background: var(--card);
+  color: var(--text);
+}
+
+[data-theme="dark"] .admin-tab-nav .tab-btn {
+  background: #233029;
+  color: var(--text);
+}
+
+.admin-tab-nav .tab-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .admin-tab-nav .tab-btn.active {
+  background: color-mix(in srgb, var(--primary), #000000 15%);
+  color: #ffffff;
+}
+
+.admin-tab-nav .tab-btn:last-child {
+  grid-column: 1 / -1;
+}
+
 .student-tab-nav {
   display: flex;
   flex-wrap: wrap;
@@ -629,6 +663,34 @@ textarea {
   align-items: center;
   gap: 0.6rem;
   flex-wrap: wrap;
+}
+
+.pagination-btn {
+  width: 2.6rem;
+  height: 2.6rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.page-info {
+  min-width: 7.5rem;
+  text-align: center;
+}
+
+.empty-state {
+  min-height: 7.5rem;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: var(--muted);
+  letter-spacing: 0.02em;
 }
 
 .stats-grid {
@@ -820,7 +882,46 @@ textarea {
   }
 
   .row-head {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  .row-head h2 {
+    font-size: 1.15rem;
+    flex: 1 1 auto;
+  }
+
+  .row-head .btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding-inline: 0.75rem;
+  }
+
+  .row-head {
+    gap: 0.5rem;
+  }
+
+  .admin-tab-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem;
+  }
+
+  .admin-tab-nav .tab-btn:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .admin-tab-nav .tab-btn {
+    padding-inline: 0.55rem;
+    font-size: 0.72rem;
+  }
+
+  .pagination {
+    justify-content: space-between;
+  }
+
+  .page-info {
+    min-width: 0;
+    flex: 1 1 auto;
   }
 
   .site-footer {
