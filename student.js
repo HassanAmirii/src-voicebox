@@ -18,6 +18,9 @@ const identityInput = document.getElementById("identityBox");
 const titleCounter = document.getElementById("titleCounter");
 const commentCounter = document.getElementById("commentCounter");
 const identityCounter = document.getElementById("identityCounter");
+const heroMetricValues = [
+  ...document.querySelectorAll(".metric-value[data-count-target]"),
+];
 
 const limits = {
   titleMin: 20,
@@ -119,6 +122,7 @@ function renderPublicBoard() {
     const card = document.createElement("article");
     card.className = "entry-card";
     card.style.animation = `fadeUp 0.45s ease ${idx * 0.04}s both`;
+    if (idx === 0) card.classList.add("is-featured");
     const tags = report.tags.length ? report.tags.join(", ") : "General";
 
     card.innerHTML = `
@@ -263,6 +267,61 @@ function clearAllCounters() {
   clearCounterState(identityCounter);
 }
 
+function animateCountUp(element, { target, suffix = "", duration = 1800 }) {
+  const startTime = performance.now();
+
+  function step(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const easedProgress = 1 - Math.pow(1 - progress, 3);
+    const value = Math.round(target * easedProgress);
+    element.textContent = `${value}${suffix}`;
+
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    }
+  }
+
+  requestAnimationFrame(step);
+}
+
+function observeHeroMetrics() {
+  if (!heroMetricValues.length) return;
+
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  if (reducedMotion || !("IntersectionObserver" in window)) {
+    heroMetricValues.forEach((element) => {
+      const target = Number(element.dataset.countTarget || 0);
+      const suffix = element.dataset.countSuffix || "";
+      element.textContent = `${target}${suffix}`;
+    });
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries, currentObserver) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+
+        heroMetricValues.forEach((element) => {
+          const target = Number(element.dataset.countTarget || 0);
+          const suffix = element.dataset.countSuffix || "";
+          animateCountUp(element, { target, suffix, duration: 1800 });
+        });
+
+        currentObserver.disconnect();
+      });
+    },
+    { threshold: 0.55 },
+  );
+
+  const metricsSection = document.querySelector(".hero-metrics");
+  if (metricsSection) observer.observe(metricsSection);
+}
+
 function bindShellEvents() {
   themeToggle.addEventListener("click", () => {
     const isDark =
@@ -368,6 +427,7 @@ async function init() {
   document.documentElement.setAttribute("data-theme", "light");
   bindShellEvents();
   bindStudentEvents();
+  observeHeroMetrics();
   clearAllCounters();
 
   try {

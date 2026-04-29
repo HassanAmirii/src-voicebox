@@ -277,6 +277,7 @@ function renderView(viewKey, listId, pageInfoId, prevId, nextId) {
 
   view.reports.forEach((report, idx) => {
     const card = renderEntryCard(report, idx);
+    if (idx === 0) card.classList.add("is-featured");
     const actions = document.createElement("div");
     actions.className = "entry-actions";
 
@@ -337,7 +338,7 @@ function drawPieChart() {
   ctx.fill();
 
   ctx.fillStyle = textColor;
-  ctx.font = '500 13px "IBM Plex Mono"';
+  ctx.font = '500 13px "DM Sans"';
   ctx.fillText(`Handled: ${state.stats.handledRatio}%`, 20, 332);
   ctx.fillText(`Reports: ${state.stats.totalReports}`, 178, 332);
 }
