@@ -84,8 +84,8 @@ body {
 }
 
 .brand-logo {
-  width: 2rem;
-  height: 2rem;
+  width: 2.35rem;
+  height: 2.35rem;
   border-radius: 0;
   flex: 0 0 auto;
 }
@@ -790,10 +790,20 @@ textarea {
   font-size: 0.83rem;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 0.7rem;
   padding: 0.5rem 0 1.4rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
+}
+
+.footer-motto {
+  flex: 0 0 100%;
+  margin: 0;
+  color: var(--primary);
+  text-align: center;
+  font-weight: 700;
 }
 
 .fade-up {
@@ -831,23 +841,44 @@ textarea {
     gap: 0.55rem;
   }
 
+  .brand-wrap {
+    gap: 0;
+  }
+
   .brand {
-    font-size: 1.36rem;
-    letter-spacing: 0.018em;
+    font-size: 1.22rem;
+    letter-spacing: 0.012em;
+    gap: 0.5rem;
   }
 
   .brand-logo {
-    width: 1.45rem;
-    height: 1.45rem;
+    width: 2.1rem;
+    height: 2.1rem;
   }
 
   .brand-sub {
-    font-size: 1rem;
-    max-width: 34ch;
+    display: none;
   }
 
   .menu-toggle {
     display: inline-flex;
+    align-self: center;
+    min-height: 0;
+    padding: 0.15rem;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    color: #000000;
+    appearance: none;
+  }
+
+  .menu-toggle .top-icon {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+
+  .menu-toggle .top-icon path {
+    stroke-width: 2.6;
   }
 
   .top-controls {
