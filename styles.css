@@ -1039,31 +1039,24 @@ textarea {
     padding-inline: 0.75rem;
   }
 
+  /* All 5 tabs stay visible at once (wrapped onto rows) instead of hiding
+     off-screen behind a scroll strip with no visible affordance — that
+     was why Admin Management (the membership-code tab) was invisible. */
   .admin-tab-nav {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 0.45rem;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    padding-bottom: 0.15rem;
-    scroll-snap-type: x proximity;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .admin-tab-nav::-webkit-scrollbar {
-    height: 0;
   }
 
   .admin-tab-nav .tab-btn {
-    flex: 0 0 auto;
-    min-width: max-content;
-    scroll-snap-align: start;
+    flex: 1 1 calc(50% - 0.225rem);
+    min-width: 0;
     padding-inline: 0.55rem;
     font-size: 0.72rem;
   }
 
   .admin-tab-nav .tab-btn:last-child {
-    grid-column: auto;
+    flex: 1 1 100%;
   }
 
   .student-tab-nav {
