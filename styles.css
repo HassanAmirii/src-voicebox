@@ -956,31 +956,33 @@ textarea {
     display: inline-flex;
     flex: 0 0 auto;
     align-self: center;
-    min-height: 2.3rem;
-    min-width: 2.3rem;
-    padding: 0.35rem;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--card), transparent 8%);
+    min-height: 0;
+    padding: 0.15rem;
+    border: 0;
+    background: transparent;
     box-shadow: none;
-    color: var(--primary);
+    color: #000000;
     appearance: none;
   }
 
+  [data-theme="dark"] .menu-toggle {
+    color: var(--text);
+  }
+
   .menu-toggle .top-icon {
-    width: 1.15rem;
-    height: 1.15rem;
+    width: 1.35rem;
+    height: 1.35rem;
   }
 
   .menu-toggle .top-icon path {
-    stroke-width: 2.3;
+    stroke-width: 2.6;
   }
 
   .top-controls {
     display: none;
     position: absolute;
     right: 0;
-    top: calc(100% + 0.35rem);
+    top: calc(100% + 0.25rem);
     flex-direction: column;
     gap: 0.5rem;
     background: var(--card);
@@ -993,7 +995,7 @@ textarea {
 
   .top-controls.open {
     display: flex;
-    min-width: 9.5rem;
+    min-width: 11.25rem;
     width: max-content;
   }
 
