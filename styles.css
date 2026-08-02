@@ -625,12 +625,15 @@ textarea {
   justify-content: space-between;
   align-items: baseline;
   gap: 0.5rem;
+  min-width: 0;
 }
 
 .entry-head h4 {
   margin: 0;
   font-weight: 700;
   letter-spacing: -0.02em;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .entry-date {
@@ -642,6 +645,13 @@ textarea {
   margin-top: 0.45rem;
   color: var(--muted);
   font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.entry-card p {
+  margin: 0.55rem 0 0;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
 }
 
 .status-pill {
@@ -772,6 +782,12 @@ textarea {
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 0.6rem;
+  min-width: 0;
+}
+
+.admin-row .mono {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .remove-admin {
@@ -944,8 +960,27 @@ textarea {
   }
 
   .admin-tab-nav {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
+    flex-wrap: nowrap;
     gap: 0.45rem;
+    overflow-x: auto;
+    padding-bottom: 0.15rem;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-tab-nav::-webkit-scrollbar {
+    height: 0;
+  }
+
+  .admin-tab-nav .tab-btn {
+    flex: 0 0 auto;
+    min-width: max-content;
+    scroll-snap-align: start;
+  }
+
+  .admin-tab-nav .tab-btn:last-child {
+    grid-column: auto;
   }
 
   .student-tab-nav {
@@ -969,6 +1004,39 @@ textarea {
   .admin-tab-nav .tab-btn {
     padding-inline: 0.55rem;
     font-size: 0.72rem;
+  }
+
+  .entry-head {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .entry-head h4,
+  .entry-date {
+    max-width: 100%;
+  }
+
+  .admin-row {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .admin-row .mono {
+    flex: 1 1 100%;
+  }
+
+  .admin-row .btn,
+  .admin-row .status-pill {
+    flex: 0 0 auto;
+  }
+
+  .chart-wrap {
+    place-items: center;
+  }
+
+  .chart-wrap canvas {
+    width: min(100%, 320px);
+    height: auto;
   }
 
   .pagination {
