@@ -190,6 +190,7 @@ function clearCounterState(counterEl) {
   if (!counterEl) return;
   counterEl.textContent = "";
   counterEl.classList.remove("invalid");
+  counterEl.classList.remove("limit-message");
 }
 
 function updateTitleCounter() {
@@ -200,6 +201,7 @@ function updateTitleCounter() {
   const isTooLong = length > limits.titleMax;
 
   if (isAtMax) {
+    titleCounter.classList.add("limit-message");
     setCounterState(
       titleCounter,
       "Title is limited to 30 characters. You can express more in the comment section.",
@@ -207,6 +209,8 @@ function updateTitleCounter() {
     );
     return;
   }
+
+  titleCounter.classList.remove("limit-message");
 
   if (isTooLong) {
     setCounterState(

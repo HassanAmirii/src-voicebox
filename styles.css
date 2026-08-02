@@ -396,6 +396,11 @@ textarea {
   color: var(--danger);
 }
 
+.field-counter.limit-message {
+  color: #2f9e44;
+  font-weight: 600;
+}
+
 .form-actions {
   display: flex;
   align-items: center;
