@@ -384,6 +384,8 @@ textarea {
   color: var(--muted);
   font-size: 0.8rem;
   letter-spacing: 0.02em;
+  display: block;
+  line-height: 1.4;
 }
 
 .field-counter:empty {

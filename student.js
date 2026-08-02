@@ -195,8 +195,18 @@ function clearCounterState(counterEl) {
 function updateTitleCounter() {
   if (!complaintTitleInput) return;
   const length = complaintTitleInput.value.trim().length;
+  const isAtMax = length === limits.titleMax;
   const isTooShort = length < limits.titleMin;
   const isTooLong = length > limits.titleMax;
+
+  if (isAtMax) {
+    setCounterState(
+      titleCounter,
+      "Title is limited to 30 characters. You can express more in the comment section.",
+      false,
+    );
+    return;
+  }
 
   if (isTooLong) {
     setCounterState(
@@ -356,7 +366,9 @@ function bindStudentEvents() {
   identityInput.addEventListener("input", updateIdentityCounter);
 
   complaintTitleInput.addEventListener("blur", () => {
-    clearCounterState(titleCounter);
+    if (complaintTitleInput.value.trim().length !== limits.titleMax) {
+      clearCounterState(titleCounter);
+    }
   });
   complaintCommentInput.addEventListener("blur", () => {
     clearCounterState(commentCounter);
