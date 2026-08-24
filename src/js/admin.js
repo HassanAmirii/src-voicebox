@@ -1,8 +1,6 @@
 // Admin dashboard data, rendering, and event handling.
 
-const API_BASE_URL =
-  (window.VOICEBOX_CONFIG && window.VOICEBOX_CONFIG.API_BASE_URL) ||
-  "https://voicebox-api-zmw2.onrender.com";
+const API_BASE_URL = window.VOICEBOX_CONFIG.API_BASE_URL;
 const TOKEN_KEY = "voicebox_admin_token";
 const CURRENT_ADMIN_USERNAME_KEY = "voicebox_current_admin_username";
 

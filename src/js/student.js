@@ -1,8 +1,6 @@
 // Student reporting form, public board, and student interactions.
 
-const API_BASE_URL =
-  (window.VOICEBOX_CONFIG && window.VOICEBOX_CONFIG.API_BASE_URL) ||
-  "https://voicebox-api-zmw2.onrender.com";
+const API_BASE_URL = window.VOICEBOX_CONFIG.API_BASE_URL;
 
 const complaintForm = document.getElementById("complaintForm");
 const submissionStatus = document.getElementById("submissionStatus");
@@ -40,10 +38,6 @@ function setSubmissionMessage(message, isError = false) {
   submissionStatus.textContent = message;
   submissionStatus.style.color = isError ? "var(--danger)" : "var(--muted)";
 }
-
-
-
-
 
 function normalizeReport(report) {
   const tags = Array.isArray(report.tags)
@@ -145,8 +139,6 @@ async function loadPublicReports() {
   studentState.reports = reports.map(normalizeReport);
   renderPublicBoard();
 }
-
-
 
 function validateForm({ title, comment, tags, identity }) {
   if (title.length < limits.titleMin || title.length > limits.titleMax) {
