@@ -63,6 +63,14 @@ const mobileMenuToggle = document.getElementById("mobileMenuToggle");
 const topControls = document.getElementById("topControls");
 const generatedCodeEl = document.getElementById("generatedCode");
 const copyMembershipCodeBtn = document.getElementById("copyMembershipCodeBtn");
+const deleteReportModal = document.getElementById("deleteReportModal");
+const deleteReportReportTitle = document.getElementById(
+  "deleteReportReportTitle",
+);
+const deleteReportMessage = document.getElementById("deleteReportMessage");
+const cancelDeleteReport = document.getElementById("cancelDeleteReport");
+const confirmDeleteReport = document.getElementById("confirmDeleteReport");
+let deleteReportDialogResolve = null;
 
 function setCopyButtonState({ visible, copied = false } = {}) {
   if (!copyMembershipCodeBtn) return;
@@ -517,13 +525,43 @@ async function updateReportStatus(reportId, status, promptText, fallbackNote) {
   renderTagOptions();
 }
 
-async function deleteReport(reportId) {
-  const confirmed = window.confirm(
-    "Delete this report permanently? This action cannot be undone.",
-  );
+function findReport(reportId) {
+  return [state.unhandled, state.queue, state.handled]
+    .flatMap((view) => view.reports)
+    .find((report) => String(report.id) === String(reportId));
+}
+
+function closeDeleteReportModal(confirmed = false) {
+  if (!deleteReportModal) return;
+  deleteReportModal.classList.add("hidden");
+  deleteReportModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+  if (deleteReportDialogResolve) {
+    deleteReportDialogResolve(confirmed);
+    deleteReportDialogResolve = null;
+  }
+}
+
+function showDeleteReportModal(report) {
+  if (!deleteReportModal || !report) return Promise.resolve(false);
+
+  deleteReportReportTitle.textContent = report.title;
+  deleteReportMessage.textContent = report.comment || "No message provided.";
+  deleteReportModal.classList.remove("hidden");
+  deleteReportModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  confirmDeleteReport.focus();
+
+  return new Promise((resolve) => {
+    deleteReportDialogResolve = resolve;
+  });
+}
+
+async function deleteReport(report) {
+  const confirmed = await showDeleteReportModal(report);
   if (!confirmed) return;
 
-  await apiRequest(`/admin/reports/${encodeURIComponent(reportId)}`, {
+  await apiRequest(`/admin/reports/${encodeURIComponent(report.id)}`, {
     method: "DELETE",
     token: state.token,
   });
@@ -747,11 +785,11 @@ function bindDashboardEvents() {
       const target = event.target;
       if (!(target instanceof HTMLButtonElement)) return;
       if (target.classList.contains("delete-report")) {
-        const reportId = target.dataset.id;
-        if (!reportId) return;
+        const report = findReport(target.dataset.id);
+        if (!report) return;
 
         try {
-          await deleteReport(reportId);
+          await deleteReport(report);
         } catch (error) {
           showInfo(error.message || "Could not delete report.", true);
         }
@@ -780,11 +818,11 @@ function bindDashboardEvents() {
       const target = event.target;
       if (!(target instanceof HTMLButtonElement)) return;
       if (target.classList.contains("delete-report")) {
-        const reportId = target.dataset.id;
-        if (!reportId) return;
+        const report = findReport(target.dataset.id);
+        if (!report) return;
 
         try {
-          await deleteReport(reportId);
+          await deleteReport(report);
         } catch (error) {
           showInfo(error.message || "Could not delete report.", true);
         }
@@ -816,11 +854,11 @@ function bindDashboardEvents() {
       const target = event.target;
       if (!(target instanceof HTMLButtonElement)) return;
       if (target.classList.contains("delete-report")) {
-        const reportId = target.dataset.id;
-        if (!reportId) return;
+        const report = findReport(target.dataset.id);
+        if (!report) return;
 
         try {
-          await deleteReport(reportId);
+          await deleteReport(report);
         } catch (error) {
           showInfo(error.message || "Could not delete report.", true);
         }
@@ -844,6 +882,22 @@ function bindDashboardEvents() {
     });
 
   document.getElementById("logoutBtn").addEventListener("click", logout);
+
+  cancelDeleteReport.addEventListener("click", () => closeDeleteReportModal());
+  confirmDeleteReport.addEventListener("click", () =>
+    closeDeleteReportModal(true),
+  );
+  deleteReportModal.addEventListener("click", (event) => {
+    if (event.target === deleteReportModal) closeDeleteReportModal();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (
+      event.key === "Escape" &&
+      !deleteReportModal.classList.contains("hidden")
+    ) {
+      closeDeleteReportModal();
+    }
+  });
 }
 
 function bindShellEvents() {

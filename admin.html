@@ -447,6 +447,45 @@
       <p class="footer-motto">One Nacos, nobody dies</p>
     </footer>
 
+    <div
+      id="deleteReportModal"
+      class="modal-backdrop hidden"
+      aria-hidden="true"
+    >
+      <section
+        class="confirm-modal"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="deleteReportTitle"
+        aria-describedby="deleteReportDescription"
+      >
+        <div class="confirm-modal-icon" aria-hidden="true">!</div>
+        <p class="eyebrow">Permanent action</p>
+        <h2 id="deleteReportTitle">
+          Are you sure you want to delete this report?
+        </h2>
+        <p id="deleteReportDescription" class="confirm-modal-copy">
+          This report will be permanently removed and cannot be recovered.
+        </p>
+        <div class="confirm-report-preview">
+          <h3 id="deleteReportReportTitle"></h3>
+          <p id="deleteReportMessage"></p>
+        </div>
+        <div class="confirm-modal-actions">
+          <button id="cancelDeleteReport" class="btn btn-ghost" type="button">
+            Keep Report
+          </button>
+          <button
+            id="confirmDeleteReport"
+            class="btn delete-report"
+            type="button"
+          >
+            Delete Report
+          </button>
+        </div>
+      </section>
+    </div>
+
     <script src="src/js/config.js"></script>
     <script src="src/js/utils.js"></script>
     <script src="src/js/auth.js"></script>

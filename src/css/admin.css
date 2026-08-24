@@ -172,3 +172,102 @@
   border-color: var(--danger);
   background: var(--danger);
 }
+
+.modal-open {
+  overflow: hidden;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--text), transparent 35%);
+}
+
+.modal-backdrop.hidden {
+  display: none;
+}
+
+.confirm-modal {
+  width: min(100%, 30rem);
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--danger);
+  border-radius: 8px;
+  background: var(--card);
+  box-shadow: 0 1.5rem 4rem color-mix(in srgb, var(--text), transparent 70%);
+}
+
+.confirm-modal-icon {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: 50%;
+  color: #ffffff;
+  background: var(--danger);
+  font-weight: 800;
+}
+
+.confirm-modal .eyebrow {
+  margin: 1rem 0 0.35rem;
+  color: var(--danger);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.confirm-modal h2 {
+  margin: 0;
+  font-size: clamp(1.2rem, 3vw, 1.55rem);
+}
+
+.confirm-modal-copy {
+  margin: 0.55rem 0 1rem;
+  color: var(--muted);
+}
+
+.confirm-report-preview {
+  padding: 0.9rem;
+  border-left: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--accent), transparent 92%);
+}
+
+.confirm-report-preview h3,
+.confirm-report-preview p {
+  overflow-wrap: anywhere;
+}
+
+.confirm-report-preview h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.confirm-report-preview p {
+  margin: 0.45rem 0 0;
+  white-space: pre-wrap;
+}
+
+.confirm-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+}
+
+@media (max-width: 480px) {
+  .confirm-modal {
+    padding: 1.15rem;
+  }
+
+  .confirm-modal-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
