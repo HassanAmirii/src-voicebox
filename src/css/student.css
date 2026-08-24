@@ -1,0 +1,44 @@
+/* Student view-only navigation and form styles. */
+
+.identity-note {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.student-tab-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.student-tab-btn {
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--text);
+  padding: 0.62rem 0.72rem;
+  font: inherit;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.8rem;
+}
+
+[data-theme="dark"] .student-tab-btn {
+  background: #263128;
+}
+
+.student-tab-btn.active {
+  background: color-mix(in srgb, var(--primary), transparent 88%);
+  color: var(--primary);
+}
+
+.student-tab-content {
+  display: none;
+  margin-top: 1rem;
+}
+
+.student-tab-content.active {
+  display: block;
+}

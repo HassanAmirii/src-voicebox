@@ -1,0 +1,174 @@
+/* Admin dashboard-only controls, statistics, and management styles. */
+
+.admin-restricted {
+  margin-top: 0.45rem;
+  font-size: 0.82rem;
+  color: color-mix(in srgb, var(--danger), var(--text) 30%);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.admin-switch {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 0.9rem;
+  max-width: 100%;
+}
+
+.admin-tab-nav {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.admin-tab-nav .tab-btn {
+  width: 100%;
+}
+
+.admin-tab-nav .tab-btn {
+  background: var(--card);
+  color: var(--text);
+}
+
+[data-theme="dark"] .admin-tab-nav .tab-btn {
+  background: #233029;
+  color: var(--text);
+}
+
+.admin-tab-nav .tab-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .admin-tab-nav .tab-btn.active {
+  background: color-mix(in srgb, var(--primary), #000000 15%);
+  color: #ffffff;
+}
+
+.admin-tab-nav .tab-btn:last-child {
+  grid-column: 1 / -1;
+}
+
+.stats-grid {
+  margin-top: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.6rem;
+}
+
+.stat-card {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.7rem;
+  background: var(--card);
+  min-width: 0;
+}
+
+[data-theme="dark"] .stat-card {
+  background: #202820;
+}
+
+.stat-value {
+  margin: 0.2rem 0 0;
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--primary);
+}
+
+.chart-wrap {
+  margin-top: 0.95rem;
+  display: grid;
+  place-items: start;
+  max-width: 100%;
+}
+
+.chart-wrap canvas {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.admin-actions {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.generated-code-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.copy-code-btn {
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.copy-code-btn.hidden {
+  display: none;
+}
+
+.admin-list {
+  margin-top: 0.8rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.admin-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.admin-row .mono {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  flex: 1 1 auto;
+}
+
+.remove-admin {
+  border: 1px solid color-mix(in srgb, var(--danger), transparent 50%);
+  color: var(--danger);
+  background: transparent;
+  border-radius: 4px;
+  padding: 0.42rem 0.62rem;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.remove-admin-confirm {
+  border: 1px solid color-mix(in srgb, var(--danger), transparent 50%);
+  color: var(--danger);
+  background: transparent;
+  border-radius: 4px;
+  padding: 0.42rem 0.62rem;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.delete-report {
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger), transparent 50%);
+  background: transparent;
+}
+
+.delete-report:hover {
+  color: #ffffff;
+  border-color: var(--danger);
+  background: var(--danger);
+}

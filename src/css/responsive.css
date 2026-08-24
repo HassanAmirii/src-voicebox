@@ -1,0 +1,201 @@
+/* Responsive breakpoint rules for all views. */
+
+/* ============================================
+	 TABLET / SMALL DESKTOP — tighten before phone breakpoint
+	 ============================================ */
+@media (max-width: 760px) {
+  .top-bar {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .brand-wrap {
+    gap: 0;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .brand {
+    font-size: 1.02rem;
+    letter-spacing: 0.012em;
+    gap: 0.38rem;
+    line-height: 1.05;
+    white-space: normal;
+    min-width: 0;
+  }
+  .brand-logo {
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+  .brand-sub {
+    display: none;
+  }
+  .menu-toggle {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-self: center;
+    min-height: 0;
+    padding: 0.15rem;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    color: #000000;
+    appearance: none;
+  }
+  [data-theme="dark"] .menu-toggle {
+    color: var(--text);
+  }
+  .menu-toggle .top-icon {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+  .menu-toggle .top-icon path {
+    stroke-width: 2.6;
+  }
+  .top-controls {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.25rem);
+    flex-direction: column;
+    gap: 0.5rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.5rem;
+    z-index: 999;
+    max-width: calc(100vw - 1rem);
+  }
+  .top-controls.open {
+    display: flex;
+    min-width: 11.25rem;
+    width: max-content;
+  }
+  .top-controls.open .top-icon-btn {
+    width: 100%;
+    height: auto;
+    padding: 0.5rem 0.62rem;
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+  .top-controls.open .top-action-label {
+    display: inline;
+    font-size: 0.74rem;
+  }
+  .layout {
+    gap: 0.75rem;
+  }
+  .panel {
+    padding: 1rem 0.9rem;
+  }
+  .row-head {
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .row-head h2 {
+    font-size: 1.15rem;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .row-head .btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding-inline: 0.75rem;
+  }
+  .admin-tab-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+  .admin-tab-nav .tab-btn {
+    flex: 1 1 calc(50% - 0.225rem);
+    min-width: 0;
+    padding-inline: 0.55rem;
+    font-size: 0.72rem;
+  }
+  .admin-tab-nav .tab-btn:last-child {
+    flex: 1 1 100%;
+  }
+  .student-tab-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem;
+  }
+  .student-tab-btn {
+    width: 100%;
+    min-width: 0;
+    padding-inline: 0.5rem;
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
+  .entry-head {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .entry-head h4,
+  .entry-date {
+    max-width: 100%;
+  }
+  .admin-row {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .admin-row .mono {
+    flex: 1 1 100%;
+  }
+  .admin-row .btn,
+  .admin-row .status-pill {
+    flex: 0 0 auto;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .chart-wrap {
+    place-items: center;
+  }
+  .chart-wrap canvas {
+    width: min(100%, 320px);
+    height: auto;
+  }
+  .pagination {
+    justify-content: space-between;
+  }
+  .page-info {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .site-footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.2rem;
+  }
+  .controls-row {
+    grid-template-columns: 1fr;
+  }
+  .hero-metrics {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+	 SMALL PHONES
+	 ============================================ */
+@media (max-width: 480px) {
+  .student-tab-btn {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    padding-inline: 0.42rem;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .panel {
+    padding: 0.85rem 0.75rem;
+  }
+  .hero-title {
+    font-size: clamp(1.4rem, 7vw, 2rem);
+  }
+}

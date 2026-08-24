@@ -10,8 +10,12 @@
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="icon" type="image/svg+xml" href="src.png" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="stylesheet" href="src/css/base.css" />
+    <link rel="stylesheet" href="src/css/layout.css" />
+    <link rel="stylesheet" href="src/css/components.css" />
+    <link rel="stylesheet" href="src/css/student.css" />
+    <link rel="stylesheet" href="src/css/responsive.css" />
   </head>
   <body>
     <div class="grid-overlay" aria-hidden="true"></div>
@@ -19,7 +23,7 @@
     <header class="top-bar fade-up">
       <div class="brand-wrap">
         <h1 class="brand">
-          <img src="src.png" alt="SRC logo" class="brand-logo" />
+          <img src="src/assets/src.png" alt="SRC logo" class="brand-logo" />
           <span class="brand-wordmark"
             ><span class="brand-accent">N</span>acos src voicebox</span
           >
@@ -282,7 +286,9 @@
       <p class="footer-motto">One Nacos, nobody dies</p>
     </footer>
 
-    <script src="config.js"></script>
-    <script src="student.js"></script>
+    <script src="src/js/config.js"></script>
+    <script src="src/js/utils.js"></script>
+    <script src="src/js/tabs.js"></script>
+    <script src="src/js/student.js"></script>
   </body>
 </html>

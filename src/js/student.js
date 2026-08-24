@@ -1,3 +1,5 @@
+// Student reporting form, public board, and student interactions.
+
 const API_BASE_URL =
   (window.VOICEBOX_CONFIG && window.VOICEBOX_CONFIG.API_BASE_URL) ||
   "https://voicebox-api-zmw2.onrender.com";
@@ -39,19 +41,9 @@ function setSubmissionMessage(message, isError = false) {
   submissionStatus.style.color = isError ? "var(--danger)" : "var(--muted)";
 }
 
-function formatDate(iso) {
-  return new Intl.DateTimeFormat("en", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(iso));
-}
 
-function normalizeStatus(status) {
-  if (status === "Unhandled" || status === "Queue" || status === "Handled") {
-    return status;
-  }
-  return "Unhandled";
-}
+
+
 
 function normalizeReport(report) {
   const tags = Array.isArray(report.tags)
@@ -154,15 +146,7 @@ async function loadPublicReports() {
   renderPublicBoard();
 }
 
-function setActiveStudentTab(tabId) {
-  studentState.activeTab = tabId;
-  studentTabButtons.forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.studentTab === tabId);
-  });
-  studentTabContents.forEach((content) => {
-    content.classList.toggle("active", content.id === tabId);
-  });
-}
+
 
 function validateForm({ title, comment, tags, identity }) {
   if (title.length < limits.titleMin || title.length > limits.titleMax) {

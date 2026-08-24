@@ -1,3 +1,5 @@
+// Admin dashboard data, rendering, and event handling.
+
 const API_BASE_URL =
   (window.VOICEBOX_CONFIG && window.VOICEBOX_CONFIG.API_BASE_URL) ||
   "https://voicebox-api-zmw2.onrender.com";
@@ -62,21 +64,6 @@ const topControls = document.getElementById("topControls");
 const generatedCodeEl = document.getElementById("generatedCode");
 const copyMembershipCodeBtn = document.getElementById("copyMembershipCodeBtn");
 
-function switchAuthMode(mode) {
-  const isLogin = mode === "login";
-  showLogin.classList.toggle("active", isLogin);
-  showSignup.classList.toggle("active", !isLogin);
-  loginForm.classList.toggle("hidden", !isLogin);
-  signupForm.classList.toggle("hidden", isLogin);
-  adminFormTitle.textContent = isLogin ? "Admin Login" : "Admin Sign Up";
-  authStatus.textContent = "";
-}
-
-function showInfo(message, isError = false) {
-  authStatus.textContent = message;
-  authStatus.style.color = isError ? "var(--danger)" : "var(--muted)";
-}
-
 function setCopyButtonState({ visible, copied = false } = {}) {
   if (!copyMembershipCodeBtn) return;
   copyMembershipCodeBtn.classList.toggle("hidden", !visible);
@@ -85,56 +72,6 @@ function setCopyButtonState({ visible, copied = false } = {}) {
     copied ? "Code copied" : "Copy generated membership code",
   );
   copyMembershipCodeBtn.setAttribute("title", copied ? "Copied" : "Copy code");
-}
-
-async function copyTextToClipboard(text) {
-  if (navigator.clipboard && window.isSecureContext) {
-    await navigator.clipboard.writeText(text);
-    return;
-  }
-
-  const temp = document.createElement("textarea");
-  temp.value = text;
-  temp.setAttribute("readonly", "");
-  temp.style.position = "absolute";
-  temp.style.left = "-9999px";
-  document.body.appendChild(temp);
-  temp.select();
-  document.execCommand("copy");
-  document.body.removeChild(temp);
-}
-
-function decodeJwtPayload(token) {
-  if (!token || typeof token !== "string") return null;
-  const parts = token.split(".");
-  if (parts.length !== 3) return null;
-
-  try {
-    const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-    const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
-    const json = atob(padded);
-    return JSON.parse(json);
-  } catch {
-    return null;
-  }
-}
-
-function resolveUsernameFromToken(token) {
-  const payload = decodeJwtPayload(token);
-  if (!payload || typeof payload !== "object") return "";
-
-  const candidates = [
-    payload.username,
-    payload.userName,
-    payload.user,
-    payload.sub,
-    payload.name,
-  ];
-
-  const found = candidates.find(
-    (item) => typeof item === "string" && item.trim().length,
-  );
-  return found ? found.trim() : "";
 }
 
 function setListLoading(listId, message = "Loading reports...") {
@@ -155,13 +92,6 @@ function setAdminsLoading() {
   const adminList = document.getElementById("adminList");
   if (!adminList) return;
   adminList.innerHTML = '<div class="admin-row">Loading admins...</div>';
-}
-
-function formatDate(iso) {
-  return new Intl.DateTimeFormat("en", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(iso));
 }
 
 async function apiRequest(path, options = {}) {
@@ -203,13 +133,6 @@ async function apiRequest(path, options = {}) {
   }
 
   return payload;
-}
-
-function normalizeStatus(status) {
-  if (status === "Unhandled" || status === "Queue" || status === "Handled") {
-    return status;
-  }
-  return "Unhandled";
 }
 
 function normalizeReport(report) {
@@ -295,6 +218,7 @@ function renderView(viewKey, listId, pageInfoId, prevId, nextId) {
     if (viewKey === "handled") {
       actions.innerHTML = `<button class="btn btn-ghost return-queue" data-id="${report.id}">Click to Return to Queue</button>`;
     }
+    actions.innerHTML += `<button class="btn delete-report" data-id="${report.id}">Delete Report</button>`;
 
     card.appendChild(actions);
     container.appendChild(card);
@@ -540,16 +464,6 @@ async function loadDashboardData() {
   renderTagOptions();
 }
 
-function setActiveTab(tabId) {
-  state.activeTab = tabId;
-  tabButtons.forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.tab === tabId);
-  });
-  tabContents.forEach((content) => {
-    content.classList.toggle("active", content.id === tabId);
-  });
-}
-
 function showDashboard() {
   state.loggedIn = true;
   adminGateway.classList.add("hidden");
@@ -603,66 +517,25 @@ async function updateReportStatus(reportId, status, promptText, fallbackNote) {
   renderTagOptions();
 }
 
-function bindAuthEvents() {
-  showLogin.addEventListener("click", () => switchAuthMode("login"));
-  showSignup.addEventListener("click", () => switchAuthMode("signup"));
+async function deleteReport(reportId) {
+  const confirmed = window.confirm(
+    "Delete this report permanently? This action cannot be undone.",
+  );
+  if (!confirmed) return;
 
-  [...document.querySelectorAll(".info-btn")].forEach((btn) => {
-    btn.addEventListener("click", () => {
-      showInfo(btn.dataset.info || "Credential guidance unavailable.");
-    });
+  await apiRequest(`/admin/reports/${encodeURIComponent(reportId)}`, {
+    method: "DELETE",
+    token: state.token,
   });
 
-  loginForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const username = document.getElementById("adminUsername").value.trim();
-    const password = document.getElementById("adminPassword").value.trim();
-
-    try {
-      showInfo("Signing in to secure dashboard...");
-      const payload = await apiRequest("/auth/login", {
-        method: "POST",
-        body: { username, password },
-      });
-
-      const token = payload && payload.token ? payload.token : "";
-      if (!token) throw new Error("No token received from server.");
-
-      state.token = token;
-      state.currentAdminUsername = username;
-      state.pendingDeleteUsername = "";
-      localStorage.setItem(TOKEN_KEY, token);
-      localStorage.setItem(CURRENT_ADMIN_USERNAME_KEY, username);
-
-      showDashboard();
-      await loadDashboardData();
-      showInfo("Access granted.");
-    } catch (error) {
-      showInfo(error.message || "Login failed.", true);
-    }
-  });
-
-  signupForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const username = document.getElementById("signupUsername").value.trim();
-    const password = document.getElementById("signupPassword").value.trim();
-    const membershipCode = document
-      .getElementById("membershipCode")
-      .value.trim();
-
-    try {
-      showInfo("Creating admin account...");
-      await apiRequest("/auth/register", {
-        method: "POST",
-        body: { username, password, membershipCode },
-      });
-      showInfo("Admin account created. Proceed to sign in.");
-      switchAuthMode("login");
-      signupForm.reset();
-    } catch (error) {
-      showInfo(error.message || "Registration failed.", true);
-    }
-  });
+  await Promise.all([
+    loadReportsForTab("unhandledTab"),
+    loadReportsForTab("queueTab"),
+    loadReportsForTab("handledTab"),
+    loadStats(),
+  ]);
+  renderTagOptions();
+  showInfo("Report deleted successfully.");
 }
 
 function bindDashboardEvents() {
@@ -873,6 +746,17 @@ function bindDashboardEvents() {
     .addEventListener("click", async (event) => {
       const target = event.target;
       if (!(target instanceof HTMLButtonElement)) return;
+      if (target.classList.contains("delete-report")) {
+        const reportId = target.dataset.id;
+        if (!reportId) return;
+
+        try {
+          await deleteReport(reportId);
+        } catch (error) {
+          showInfo(error.message || "Could not delete report.", true);
+        }
+        return;
+      }
       if (!target.classList.contains("queue-action")) return;
 
       const reportId = target.dataset.id;
@@ -895,6 +779,17 @@ function bindDashboardEvents() {
     .addEventListener("click", async (event) => {
       const target = event.target;
       if (!(target instanceof HTMLButtonElement)) return;
+      if (target.classList.contains("delete-report")) {
+        const reportId = target.dataset.id;
+        if (!reportId) return;
+
+        try {
+          await deleteReport(reportId);
+        } catch (error) {
+          showInfo(error.message || "Could not delete report.", true);
+        }
+        return;
+      }
       if (!target.classList.contains("mark-handled")) return;
 
       const reportId = target.dataset.id;
@@ -920,6 +815,17 @@ function bindDashboardEvents() {
     .addEventListener("click", async (event) => {
       const target = event.target;
       if (!(target instanceof HTMLButtonElement)) return;
+      if (target.classList.contains("delete-report")) {
+        const reportId = target.dataset.id;
+        if (!reportId) return;
+
+        try {
+          await deleteReport(reportId);
+        } catch (error) {
+          showInfo(error.message || "Could not delete report.", true);
+        }
+        return;
+      }
       if (!target.classList.contains("return-queue")) return;
 
       const reportId = target.dataset.id;
