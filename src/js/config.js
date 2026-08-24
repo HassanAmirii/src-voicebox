@@ -2,5 +2,8 @@
 
 window.VOICEBOX_CONFIG = Object.freeze({
   API_BASE_URL:
-    import.meta.env.VITE_API_URL || "https://voicebox.formatio.cloud",
+    window.location.hostname.includes("localhost") ||
+    window.location.hostname.includes("voicebox-dev")
+      ? "https://voicebox-dev.formatio.cloud"
+      : "https://voicebox.formatio.cloud",
 });
