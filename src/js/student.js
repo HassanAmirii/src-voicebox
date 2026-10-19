@@ -4,6 +4,10 @@ const API_BASE_URL = window.VOICEBOX_CONFIG.API_BASE_URL;
 
 const complaintForm = document.getElementById("complaintForm");
 const submissionStatus = document.getElementById("submissionStatus");
+const ticketSearchForm = document.getElementById("ticketSearchForm");
+const ticketIdInput = document.getElementById("ticketIdInput");
+const ticketSearchStatus = document.getElementById("ticketSearchStatus");
+const ticketSearchResult = document.getElementById("ticketSearchResult");
 const themeToggle = document.getElementById("themeToggle");
 const mobileMenuToggle = document.getElementById("mobileMenuToggle");
 const topControls = document.getElementById("topControls");
@@ -48,12 +52,22 @@ function normalizeReport(report) {
 
   return {
     id: report._id || report.id,
+    ticketId: report.ticketId || "",
     title: report.title || "Untitled",
     tags,
     status: normalizeStatus(report.status),
     adminNote: report.adminNote || "Pending moderator review.",
     createdAt: report.createdAt || new Date().toISOString(),
   };
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 async function apiRequest(path, options = {}) {
@@ -105,23 +119,64 @@ function renderPublicBoard() {
   }
 
   studentState.reports.forEach((report, idx) => {
-    const card = document.createElement("article");
-    card.className = "entry-card";
-    card.style.animation = `fadeUp 0.45s ease ${idx * 0.04}s both`;
-    if (idx === 0) card.classList.add("is-featured");
-    const tags = report.tags.length ? report.tags.join(", ") : "General";
+    publicStatusList.appendChild(createReportCard(report, idx));
+  });
+}
 
-    card.innerHTML = `
-      <div class="entry-head">
-        <h4>${report.title}</h4>
-        <span class="entry-date">${formatDate(report.createdAt)}</span>
+function createReportCard(report, idx = 0) {
+  const card = document.createElement("article");
+  card.className = "entry-card";
+  card.style.animation = `fadeUp 0.45s ease ${idx * 0.04}s both`;
+  if (idx === 0) card.classList.add("is-featured");
+  const tags = report.tags.length ? report.tags.join(", ") : "General";
+
+  card.innerHTML = `
+    <div class="entry-head">
+      <h4>${escapeHtml(report.title)}</h4>
+      <span class="entry-date">${escapeHtml(formatDate(report.createdAt))}</span>
+    </div>
+    <div class="entry-meta">Tags: ${escapeHtml(tags)}</div>
+    <div class="entry-meta">Status: <span class="status-pill">${escapeHtml(report.status)}</span></div>
+    <div class="entry-meta">Admin Note: ${escapeHtml(report.adminNote)}</div>
+  `;
+  return card;
+}
+
+function setTicketSearchMessage(message, isError = false) {
+  ticketSearchStatus.textContent = message;
+  ticketSearchStatus.style.color = isError ? "var(--danger)" : "var(--muted)";
+}
+
+function renderTicketSearchResult(report) {
+  ticketSearchResult.innerHTML = "";
+  ticketSearchResult.appendChild(createReportCard(report));
+}
+
+function renderSubmissionSuccess(ticketId) {
+  const card = document.createElement("article");
+  card.className = "submission-success-card";
+  card.innerHTML = `
+    <h3>Report submitted successfully</h3>
+    <p>Your report has been received. Keep this ticket ID safe to check its status later.</p>
+    <div class="ticket-id-display">
+      <label for="submittedTicketId">Your ticket ID</label>
+      <div class="ticket-id-actions">
+        <input id="submittedTicketId" class="ticket-id-value" value="${escapeHtml(ticketId)}" readonly />
+        <button type="button" class="btn btn-ghost copy-ticket-btn">Copy</button>
       </div>
-      <div class="entry-meta">Tags: ${tags}</div>
-      <div class="entry-meta">Status: <span class="status-pill">${report.status}</span></div>
-      <div class="entry-meta">Admin Note: ${report.adminNote}</div>
-    `;
-
-    publicStatusList.appendChild(card);
+    </div>
+    <p class="ticket-warning">Copy and keep this ID somewhere safe. It is required to find your report.</p>
+  `;
+  submissionStatus.replaceChildren(card);
+  submissionStatus.style.color = "";
+  const copyButton = card.querySelector(".copy-ticket-btn");
+  copyButton.addEventListener("click", async () => {
+    try {
+      await copyTextToClipboard(ticketId);
+      copyButton.textContent = "Copied";
+    } catch {
+      copyButton.textContent = "Copy failed";
+    }
   });
 }
 
@@ -382,18 +437,40 @@ function bindStudentEvents() {
 
     try {
       setSubmissionMessage("Submitting your report...");
-      await apiRequest("/reports", {
+      const response = await apiRequest("/reports", {
         method: "POST",
         body: payload,
       });
 
       complaintForm.reset();
       clearAllCounters();
-      setSubmissionMessage("Report submitted. Thank you for speaking up.");
-      setActiveStudentTab("publicBoardTab");
-      await loadPublicReports();
+      const ticketId =
+        response && response.newReport && response.newReport.ticketId;
+      if (!ticketId) {
+        throw new Error("Report submitted, but no ticket ID was returned.");
+      }
+      renderSubmissionSuccess(ticketId);
     } catch (error) {
       setSubmissionMessage(error.message || "Could not submit report.", true);
+    }
+  });
+
+  ticketSearchForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const ticketId = ticketIdInput.value.trim();
+    if (!ticketId) return;
+
+    ticketSearchResult.innerHTML = "";
+    setTicketSearchMessage("Searching...");
+    try {
+      const payload = await apiRequest(`/reports/${encodeURIComponent(ticketId)}`);
+      if (!payload || !payload.report) {
+        throw new Error("Report not found.");
+      }
+      renderTicketSearchResult(normalizeReport(payload.report));
+      setTicketSearchMessage("");
+    } catch (error) {
+      setTicketSearchMessage(error.message || "Could not find that report.", true);
     }
   });
 

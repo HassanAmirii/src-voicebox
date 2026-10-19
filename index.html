@@ -155,6 +155,13 @@
           <button
             type="button"
             class="student-tab-btn"
+            data-student-tab="ticketSearchTab"
+          >
+            Ticket
+          </button>
+          <button
+            type="button"
+            class="student-tab-btn"
             data-student-tab="contactsTab"
           >
             Contact
@@ -284,6 +291,31 @@
             progress while keeping sensitive details private.
           </p>
           <div id="publicStatusList" class="entry-list"></div>
+        </div>
+
+        <div id="ticketSearchTab" class="student-tab-content">
+          <h3>Find Your Report</h3>
+          <p class="entry-help">
+            Enter the ticket ID you received after submitting your report to
+            view its current status.
+          </p>
+          <form id="ticketSearchForm" class="ticket-search-form">
+            <label class="field" for="ticketIdInput">
+              <span>Ticket ID</span>
+              <input
+                type="text"
+                id="ticketIdInput"
+                placeholder="Enter your ticket ID"
+                autocomplete="off"
+                required
+              />
+            </label>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-accent">Search Ticket</button>
+              <span id="ticketSearchStatus" class="status" aria-live="polite"></span>
+            </div>
+          </form>
+          <div id="ticketSearchResult" class="entry-list"></div>
         </div>
 
         <div id="contactsTab" class="student-tab-content">

@@ -43,6 +43,66 @@
   display: block;
 }
 
+.ticket-search-form {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+
+.submission-success-card {
+  width: min(100%, 32rem);
+  margin-top: 0.9rem;
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--primary), var(--border) 45%);
+  border-radius: 6px;
+  background: var(--card);
+  text-align: center;
+}
+
+.submission-success-card h3,
+.submission-success-card p {
+  margin: 0;
+}
+
+.submission-success-card > p {
+  margin-top: 0.5rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.ticket-id-display {
+  margin-top: 1rem;
+}
+
+.ticket-id-display label {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ticket-id-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.4rem;
+}
+
+.ticket-id-value {
+  min-width: 0;
+  flex: 1 1 auto;
+  color: var(--primary);
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.ticket-warning {
+  font-size: 0.82rem;
+}
+
 .contact-list {
   display: grid;
   gap: 0.7rem;
