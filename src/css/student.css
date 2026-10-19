@@ -42,3 +42,55 @@
 .student-tab-content.active {
   display: block;
 }
+
+.contact-list {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 0.8rem;
+}
+
+.contact-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+}
+
+.contact-card h4,
+.contact-card p {
+  margin: 0;
+}
+
+.contact-card p,
+.contact-number {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--muted);
+}
+
+.contact-number {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.9rem;
+}
+
+.contact-chat-btn {
+  flex: 0 0 auto;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .contact-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .contact-chat-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
