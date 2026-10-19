@@ -73,20 +73,12 @@ function escapeHtml(value) {
 function extractTicketId(payload) {
   if (!payload || typeof payload !== "object") return "";
 
-  const visited = new Set();
-  const search = (value) => {
-    if (!value || typeof value !== "object" || visited.has(value)) return "";
-    visited.add(value);
+  const ticketId =
+    payload.ticketId ||
+    payload.newReport?.ticketId ||
+    payload.report?.ticketId;
 
-    if (value.ticketId) return String(value.ticketId).trim();
-    for (const nestedValue of Object.values(value)) {
-      const ticketId = search(nestedValue);
-      if (ticketId) return ticketId;
-    }
-    return "";
-  };
-
-  return search(payload);
+  return ticketId ? String(ticketId).trim() : "";
 }
 
 async function apiRequest(path, options = {}) {
