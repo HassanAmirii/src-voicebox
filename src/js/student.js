@@ -70,6 +70,25 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+function extractTicketId(payload) {
+  if (!payload || typeof payload !== "object") return "";
+
+  const visited = new Set();
+  const search = (value) => {
+    if (!value || typeof value !== "object" || visited.has(value)) return "";
+    visited.add(value);
+
+    if (value.ticketId) return String(value.ticketId).trim();
+    for (const nestedValue of Object.values(value)) {
+      const ticketId = search(nestedValue);
+      if (ticketId) return ticketId;
+    }
+    return "";
+  };
+
+  return search(payload);
+}
+
 async function apiRequest(path, options = {}) {
   const { method = "GET", body, query = {} } = options;
   const url = new URL(`${API_BASE_URL}${path}`);
@@ -442,13 +461,14 @@ function bindStudentEvents() {
         body: payload,
       });
 
+      const ticketId = extractTicketId(response);
+      if (!ticketId) {
+        throw new Error(
+          "The report was submitted, but the backend response did not include ticketId.",
+        );
+      }
       complaintForm.reset();
       clearAllCounters();
-      const ticketId =
-        response && response.newReport && response.newReport.ticketId;
-      if (!ticketId) {
-        throw new Error("Report submitted, but no ticket ID was returned.");
-      }
       renderSubmissionSuccess(ticketId);
     } catch (error) {
       setSubmissionMessage(error.message || "Could not submit report.", true);
