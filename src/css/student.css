@@ -75,6 +75,9 @@
 .contact-number {
   font-family: "DM Sans", sans-serif;
   font-size: 0.9rem;
+  color: var(--muted);
+  text-decoration: none;
+  -webkit-text-fill-color: var(--muted);
 }
 
 .contact-chat-btn {

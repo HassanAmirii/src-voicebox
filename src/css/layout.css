@@ -177,6 +177,13 @@ h4 {
   margin: 0;
 }
 
+.site-footer .footer-credit {
+  flex-basis: 100%;
+  text-transform: none;
+  letter-spacing: normal;
+  text-align: center;
+}
+
 @keyframes fadeUp {
   from {
     opacity: 0;
