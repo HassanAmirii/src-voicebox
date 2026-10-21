@@ -73,12 +73,27 @@ function escapeHtml(value) {
 function extractTicketId(payload) {
   if (!payload || typeof payload !== "object") return "";
 
-  const ticketId =
-    payload.ticketId ||
-    payload.newReport?.ticketId ||
-    payload.report?.ticketId;
+  const visited = new Set();
+  const findTicketId = (value) => {
+    if (!value || typeof value !== "object" || visited.has(value)) return "";
+    visited.add(value);
 
-  return ticketId ? String(ticketId).trim() : "";
+    if (value.ticketId) return String(value.ticketId).trim();
+    for (const nestedValue of Object.values(value)) {
+      const ticketId = findTicketId(nestedValue);
+      if (ticketId) return ticketId;
+    }
+    return "";
+  };
+
+  return findTicketId(payload);
+}
+
+function describeResponsePayload(payload) {
+  if (!payload || typeof payload !== "object") {
+    return typeof payload;
+  }
+  return Object.keys(payload).join(", ") || "no top-level fields";
 }
 
 async function apiRequest(path, options = {}) {
@@ -455,8 +470,12 @@ function bindStudentEvents() {
 
       const ticketId = extractTicketId(response);
       if (!ticketId) {
+        console.error("Report submission response did not include ticketId", {
+          apiBaseUrl: API_BASE_URL,
+          responseKeys: describeResponsePayload(response),
+        });
         throw new Error(
-          "The report was submitted, but the backend response did not include ticketId.",
+          `The report was submitted, but the backend response did not include ticketId (received: ${describeResponsePayload(response)}).`,
         );
       }
       complaintForm.reset();
