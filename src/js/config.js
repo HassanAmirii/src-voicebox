@@ -5,5 +5,5 @@ window.VOICEBOX_CONFIG = Object.freeze({
     window.location.hostname.includes("localhost") ||
     window.location.hostname.includes("voicebox-dev")
       ? "https://voicebox-dev.formatio.cloud"
-      : "https://voicebox.formatio.cloud",
+      : "https://voicebox-api-zmw2.onrender.com",
 });
